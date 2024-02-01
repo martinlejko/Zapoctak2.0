@@ -1,14 +1,17 @@
 #include "tgaimage.h"
 #include "model.h"
+#include "render.h"
+#include "datatypes.h"
 
 const TGAColor white = TGAColor(255, 255, 255, 255);
-const TGAColor red = TGAColor(255, 0, 0, 255);
 
 int main() {
-    TGAImage image(100, 100, TGAImage::RGB);
-    image.set(52, 41, red);
+    TGAImage image(800, 800, TGAImage::RGB);
+    Model model("/Users/martinlejko/Desktop/github/Software-Renderer-From-Scratch/src/objects/african_head.obj");
+    Vertex v1 = {80, 10, 10};
+    Vertex v2 = {20, 70, 20};
+    drawLine(v1, v2, white, image);
     image.flip_vertically();
     image.write_tga_file("output.tga");
-    Model model("/Users/martinlejko/Desktop/github/Software-Renderer-From-Scratch/src/objects/african_head.obj");
     return 0;
 }

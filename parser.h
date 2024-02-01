@@ -12,14 +12,14 @@
 
 class Parser {
 public:
-    WaveFrontData parseObjFile(std::string &filename);
+    static WaveFrontData parseObjFile(std::string &filename);
+    static void printDataInfo(WaveFrontData &data);
+    static void printNthVertex(WaveFrontData &data, int n);
+    static void printNthFace(WaveFrontData &data, int n);
 private:
-    void parseTextureFile(std::string &filename);
+    //functions for parsing Obj file
     static bool isValidFile(std::string &filename);
-    void parseFaceElement(const std::string& line, std::unordered_map<int, std::vector<FaceElement>>& faces, int& index);
-    void parseVertex(const std::string& line, std::unordered_map<int, Vertex>& vertices, int& index);
-    void parseVertexNormal(const std::string& line, std::unordered_map<int, VertexNormal>& vertexNormals, int& index);
-    void parseUVVector(const std::string& line, std::unordered_map<int, UVVector>& uvVectors, int& index);
+    void parseTextureFile(std::string &filename);
 };
 
 

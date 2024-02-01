@@ -12,4 +12,6 @@ add_executable(Zapoctak2_0 main.cpp
         datatypes.h
         model.cpp
         model.h
+        render.cpp
+        render.h
 )

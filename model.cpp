@@ -4,6 +4,7 @@
 
 #include "model.h"
 #include "parser.h"
+#include "render.h"
 #include <iostream>
 
 Model::Model(std::string filename) {
@@ -11,5 +12,10 @@ Model::Model(std::string filename) {
     Parser parser;
     objData = parser.parseObjFile(filename);
     std::cout << "Model created" << std::endl;
+
+    //testing the parser
+    parser.printDataInfo(objData);
+    parser.printNthVertex(objData, 1);
+    parser.printNthFace(objData, 1);
 
 }
