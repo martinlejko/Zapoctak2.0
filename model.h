@@ -6,14 +6,21 @@
 #define ZAPOCTAK2_0_MODEL_H
 
 #include "datatypes.h"
+#include "tgaimage.h"
 #include <string>
 #include <unordered_map>
 
 
 class Model {
 public:
-    Model(std::string filename);
+    Model(int width, int height, std::string filename);
+    void drawModelLinesOnly(TGAImage &image, TGAColor &color);
+    void drawModelColorfulTriangles(TGAImage &image);
+    int *zBuffer{};
 private:
+    void inicializeZBuffer();
+    int width;
+    int height;
     WaveFrontData objData;
 };
 

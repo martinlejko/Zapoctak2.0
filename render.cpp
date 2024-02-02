@@ -3,6 +3,7 @@
 //
 
 #include "render.h"
+#include "datatypes.h"
 #include <iostream>
 
 void drawLine(const Vertex &v1, const Vertex &v2, const TGAColor &color, TGAImage &image) {
@@ -17,7 +18,6 @@ void drawLine(const Vertex &v1, const Vertex &v2, const TGAColor &color, TGAImag
 
     while (true) {
         //colors the pixel at (x, y) with the given color
-        std::cout << "x: " << x << " y: " << y << std::endl;
         image.set(x, y, color);
 
         if (x == v2.x && y == v2.y) {
@@ -35,4 +35,35 @@ void drawLine(const Vertex &v1, const Vertex &v2, const TGAColor &color, TGAImag
     }
 }
 
+void projectVerts(int width, int height, std::unordered_map<int, Vertex>& vertices) {
+    //project the vertices to the screen
+    for (auto &vertex : vertices) {
+        vertex.second.x = (int)((vertex.second.x + 1) * width / 2);
+        vertex.second.y = (int)((vertex.second.y + 1) * height / 2);
+    }
+}
 
+Vec3 barycentric(const Vertex &v1, const Vertex &v2, const Vertex &v3, const Vertex &p) {
+    Vec3 u = Vec3(v3.x - v1.x, v2.x - v1.x, v1.x - p.x);
+    Vec3 v = Vec3(v3.y - v1.y, v2.y - v1.y, v1.y - p.y);
+    Vec3 w = u.crossProduct(v);
+    if (std::abs(w.z) < 1) return Vec3(-1, 1, 1);
+    return Vec3(1.0f - (w.x + w.y) / w.z, w.y / w.z, w.x / w.z);
+}
+
+void drawTriangle(const Vertex &v1, const Vertex &v2, const Vertex &v3, const TGAColor &color, TGAImage &image) {
+    //bounding box
+    int minX = std::min(v1.x, std::min(v2.x, v3.x));
+    int minY = std::min(v1.y, std::min(v2.y, v3.y));
+    int maxX = std::max(v1.x, std::max(v2.x, v3.x));
+    int maxY = std::max(v1.y, std::max(v2.y, v3.y));
+
+    Vertex current;
+    for (current.x = minX; current.x <= maxX; current.x++) {
+        for (current.y = minY; current.y <= maxY; current.y++) {
+            Vec3 bcCoords = barycentric(v1, v2, v3, current);
+            if (bcCoords.x < 0 || bcCoords.y < 0 || bcCoords.z < 0) continue;
+                image.set(current.x, current.y, color);
+        }
+    }
+}
