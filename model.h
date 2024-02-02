@@ -21,6 +21,7 @@ private:
     void inicializeZBuffer();
     int width;
     int height;
+    std::unordered_map<int, Vertex> originalVertices;
     WaveFrontData objData;
 };
 

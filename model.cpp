@@ -13,16 +13,16 @@ Model::Model(int width, int height, std::string filename) : width(width), height
     //working with the obj file, tga texture
     Parser parser;
     objData = parser.parseObjFile(filename);
-    parser.printNthVertex(objData, 1);
+    originalVertices = objData.vertices;
     projectVerts(width, height, objData.vertices);
-    parser.printNthVertex(objData, 1);
     //inicilization of the zBuffer
     inicializeZBuffer();
+
     //testing the parser
 //    std::cout << "Model created" << std::endl;
 //    parser.printDataInfo(objData);
-//    parser.printNthVertex(objData, 1);
 //    parser.printNthFace(objData, 1);
+//    parser.printNthVertex(objData, 1);
 }
 
 void Model::inicializeZBuffer() {
