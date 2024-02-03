@@ -62,6 +62,8 @@ struct Vec3 {
     Vec3(const Vertex& v1, const Vertex& v2) : x(v2.x - v1.x), y(v2.y - v1.y), z(v2.z - v1.z) {}
 
     Vec3 crossProduct(const Vec3& v) const;
+    float dotProduct(const Vec3& v) const;
+    void normalize();
 };
 
 #endif //ZAPOCTAK2_0_DATATYPES_H

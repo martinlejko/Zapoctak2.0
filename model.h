@@ -16,6 +16,7 @@ public:
     Model(int width, int height, std::string filename);
     void drawModelLinesOnly(TGAImage &image, TGAColor &color);
     void drawModelColorfulTriangles(TGAImage &image);
+    void drawModelWithShadows(TGAImage &image, Vec3 lightDirection);
     int *zBuffer{};
 private:
     void inicializeZBuffer();

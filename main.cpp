@@ -5,12 +5,14 @@
 const int width = 800;
 const int height = 800;
 TGAColor red = TGAColor(255, 0, 0, 255);
-int *zBuffer = new int[width * height];
+const Vec3 lightDirection = Vec3(0, 0, -1);
+
 int main() {
     TGAImage image(width, height, TGAImage::RGB);
     Model model(width, height, "/Users/martinlejko/Desktop/github/Software-Renderer-From-Scratch/src/objects/african_head.obj");
 //    model.drawModelLinesOnly(image, red);
-    model.drawModelColorfulTriangles(image);
+//    model.drawModelColorfulTriangles(image);
+//    model.drawModelWithShadows(image, lightDirection);
     image.flip_vertically();
     image.write_tga_file("output.tga");
     return 0;

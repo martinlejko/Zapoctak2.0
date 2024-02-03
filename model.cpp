@@ -51,3 +51,25 @@ void Model::drawModelColorfulTriangles(TGAImage &image) {
                      objData.vertices[face.second[2].vertexIndex], colorful, image);
     }
 }
+
+void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection) {
+    //draws the model with shadows
+    for (auto &face : objData.faces) {
+        int vIdx1 = face.second[0].vertexIndex;
+        int vIdx2 = face.second[1].vertexIndex;
+        int vIdx3 = face.second[2].vertexIndex;
+
+        Vec3 u = Vec3(originalVertices[vIdx3], originalVertices[vIdx1]);
+        Vec3 v = Vec3(originalVertices[vIdx2], originalVertices[vIdx1]);
+        Vec3 normal = u.crossProduct(v);
+
+        normal.normalize();
+        float intensity = normal.dotProduct(lightDirection);
+        
+        if (intensity > 0) {
+            TGAColor color = TGAColor(255 * intensity, 255 * intensity, 255 * intensity, 255);
+            drawTriangle(objData.vertices[vIdx1], objData.vertices[vIdx2],
+                         objData.vertices[vIdx3], color, image);
+        }
+    }
+}
