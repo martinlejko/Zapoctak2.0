@@ -12,7 +12,7 @@ int main() {
     Model model(width, height, "/Users/martinlejko/Desktop/github/Software-Renderer-From-Scratch/src/objects/african_head.obj");
 //    model.drawModelLinesOnly(image, red);
 //    model.drawModelColorfulTriangles(image);
-//    model.drawModelWithShadows(image, lightDirection);
+    model.drawModelWithShadows(image, lightDirection, true);
     image.flip_vertically();
     image.write_tga_file("output.tga");
     return 0;

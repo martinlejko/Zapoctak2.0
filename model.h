@@ -16,10 +16,9 @@ public:
     Model(int width, int height, std::string filename);
     void drawModelLinesOnly(TGAImage &image, TGAColor &color);
     void drawModelColorfulTriangles(TGAImage &image);
-    void drawModelWithShadows(TGAImage &image, Vec3 lightDirection);
-    int *zBuffer{};
+    void drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer);
+    float *zBuffer = new float[width * height];
 private:
-    void inicializeZBuffer();
     int width;
     int height;
     std::unordered_map<int, Vertex> originalVertices;

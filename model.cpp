@@ -15,21 +15,12 @@ Model::Model(int width, int height, std::string filename) : width(width), height
     objData = parser.parseObjFile(filename);
     originalVertices = objData.vertices;
     projectVerts(width, height, objData.vertices);
-    //inicilization of the zBuffer
-    inicializeZBuffer();
 
     //testing the parser
 //    std::cout << "Model created" << std::endl;
 //    parser.printDataInfo(objData);
 //    parser.printNthFace(objData, 1);
 //    parser.printNthVertex(objData, 1);
-}
-
-void Model::inicializeZBuffer() {
-    zBuffer = new int[width * height];
-    for (int i = 0; i < width * height; i++) {
-        zBuffer[i] = std::numeric_limits<int>::min();
-    }
 }
 
 void Model::drawModelLinesOnly(TGAImage &image, TGAColor &color) {
@@ -52,7 +43,8 @@ void Model::drawModelColorfulTriangles(TGAImage &image) {
     }
 }
 
-void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection) {
+void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
+
     //draws the model with shadows
     for (auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
@@ -65,11 +57,15 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection) {
 
         normal.normalize();
         float intensity = normal.dotProduct(lightDirection);
-        
+
         if (intensity > 0) {
             TGAColor color = TGAColor(255 * intensity, 255 * intensity, 255 * intensity, 255);
-            drawTriangle(objData.vertices[vIdx1], objData.vertices[vIdx2],
-                         objData.vertices[vIdx3], color, image);
+            if (useZBuffer) {
+                for (int i=width*height; i--; zBuffer[i] = -std::numeric_limits<float>::max());
+                drawTriangleZ(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], zBuffer, color, image);
+            } else {
+                drawTriangle(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], color, image);
+            }
         }
     }
 }
