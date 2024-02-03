@@ -4,6 +4,7 @@
 
 #include "render.h"
 #include "datatypes.h"
+#include "model.h"
 #include <iostream>
 
 void drawLine(const Vertex &v1, const Vertex &v2, const TGAColor &color, TGAImage &image) {
@@ -68,7 +69,7 @@ void drawTriangle(const Vertex &v1, const Vertex &v2, const Vertex &v3, const TG
     }
 }
 
-void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, float *zbuffer, const TGAColor& color, TGAImage& image) {
+void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, std::vector<float>& zbuffer, const TGAColor& color, TGAImage& image) {
     //bounding box
     int minX = std::min(v1.x, std::min(v2.x, v3.x));
     int minY = std::min(v1.y, std::min(v2.y, v3.y));
@@ -82,6 +83,7 @@ void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, float *
             if (bcCoords.x < 0 || bcCoords.y < 0 || bcCoords.z < 0) continue;
             float z = v1.z * bcCoords.x + v2.z * bcCoords.y + v3.z * bcCoords.z;
             int idx = current.x + current.y * image.get_width();
+
             if (zbuffer[idx] <= z) {
                 zbuffer[idx] = z;
                 image.set(current.x, current.y, color);

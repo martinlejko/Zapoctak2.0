@@ -15,6 +15,17 @@ int main() {
     model.drawModelWithShadows(image, lightDirection, true);
     image.flip_vertically();
     image.write_tga_file("output.tga");
+
+    TGAImage zbimage(width, height, TGAImage::GRAYSCALE);
+    for (int i = 0; i < width; i++){
+        for (int j = 0; j < height; j++) {
+            if (model.zBuffer[i + j * width] != std::numeric_limits<float>::min()) {
+                zbimage.set(i, j, TGAColor(255,255,255, 1));
+            }
+        }
+    }
+    zbimage.flip_vertically();
+    zbimage.write_tga_file("zbuffer.tga");
     return 0;
 }
 

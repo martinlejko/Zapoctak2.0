@@ -9,12 +9,13 @@
 #include "tgaimage.h"
 #include <iostream>
 
-Model::Model(int width, int height, std::string filename) : width(width), height(height){
+Model::Model(int width, int height, std::string filename) : width(width), height(height) {
     //working with the obj file, tga texture
     Parser parser;
     objData = parser.parseObjFile(filename);
     originalVertices = objData.vertices;
     projectVerts(width, height, objData.vertices);
+    zBuffer.resize(width * height);
 
     //testing the parser
 //    std::cout << "Model created" << std::endl;
@@ -43,9 +44,21 @@ void Model::drawModelColorfulTriangles(TGAImage &image) {
     }
 }
 
-void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
+void Model::printZBuffer(const std::vector<float> zbuffer, int width, int height) {
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int idx = x + y * width;
+            if (zbuffer[idx] != std::numeric_limits<float>::min()) {
+                std::cout << "1 ";
+            }
+        }
+    }
+}
 
-    //draws the model with shadows
+void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
+    if(useZBuffer) {
+        for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::min());
+    }
     for (auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
         int vIdx2 = face.second[1].vertexIndex;
@@ -61,7 +74,6 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
         if (intensity > 0) {
             TGAColor color = TGAColor(255 * intensity, 255 * intensity, 255 * intensity, 255);
             if (useZBuffer) {
-                for (int i=width*height; i--; zBuffer[i] = -std::numeric_limits<float>::max());
                 drawTriangleZ(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], zBuffer, color, image);
             } else {
                 drawTriangle(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], color, image);

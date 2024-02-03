@@ -17,7 +17,8 @@ public:
     void drawModelLinesOnly(TGAImage &image, TGAColor &color);
     void drawModelColorfulTriangles(TGAImage &image);
     void drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer);
-    float *zBuffer = new float[width * height];
+    std::vector<float> zBuffer;
+    void printZBuffer(const std::vector<float> zBuffer, int width, int height);
 private:
     int width;
     int height;
