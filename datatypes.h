@@ -6,6 +6,7 @@
 #define ZAPOCTAK2_0_DATATYPES_H
 
 #include <unordered_map>
+#include <vector>
 
 struct Vertex {
     float x;

@@ -8,6 +8,7 @@
 #include "render.h"
 #include "tgaimage.h"
 #include <iostream>
+#include <limits>
 
 Model::Model(int width, int height, std::string filename) : width(width), height(height) {
     //working with the obj file, tga texture
@@ -57,7 +58,7 @@ void Model::printZBuffer(const std::vector<float> zbuffer, int width, int height
 
 void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
     if(useZBuffer) {
-        for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::min());
+        for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::lowest());
     }
     for (auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
