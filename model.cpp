@@ -16,13 +16,30 @@ Model::Model(int width, int height, std::string filename) : width(width), height
     objData = parser.parseObjFile(filename);
     originalVertices = objData.vertices;
     projectVerts(width, height, objData.vertices);
+
+    //zBuffer space allocation
     zBuffer.resize(width * height);
+
+    //loading texture
+    loadTexture(filename, texture);
+
 
     //testing the parser
 //    std::cout << "Model created" << std::endl;
 //    parser.printDataInfo(objData);
 //    parser.printNthFace(objData, 1);
 //    parser.printNthVertex(objData, 1);
+}
+
+
+void Model::loadTexture(std::string filename, TGAImage &image) {
+    std::string textureFile = filename.substr(0, filename.size() - 4) + "_diffuse.tga"; // -4 because of .obj
+    std::cout << "texture file " << textureFile << " loading " << (image.read_tga_file(textureFile.c_str()) ? "ok" : "failed") << std::endl;
+    image.flip_vertically();
+}
+
+TGAColor Model::diffuse(UVVector uvP) {
+    return texture.get(uvP.x, uvP.y);
 }
 
 void Model::drawModelLinesOnly(TGAImage &image, TGAColor &color) {
@@ -78,6 +95,34 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
                 drawTriangleZ(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], zBuffer, color, image);
             } else {
                 drawTriangle(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], color, image);
+            }
+        }
+    }
+}
+
+void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
+    if(useZBuffer){
+        for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::lowest());
+    }
+    for(auto &face : objData.faces) {
+        int vIdx1 = face.second[0].vertexIndex;
+        int vIdx2 = face.second[1].vertexIndex;
+        int vIdx3 = face.second[2].vertexIndex;
+
+        int uvIdx1 = face.second[0].textureIndex;
+        int uvIdx2 = face.second[1].textureIndex;
+        int uvIdx3 = face.second[2].textureIndex;
+
+        Vec3 u = Vec3(originalVertices[vIdx3], originalVertices[vIdx1]);
+        Vec3 v = Vec3(originalVertices[vIdx2], originalVertices[vIdx1]);
+        Vec3 normal = u.crossProduct(v);
+
+        normal.normalize();
+        float intensity = normal.dotProduct(lightDirection);
+
+        if (intensity > 0) {
+            if(useZBuffer){
+                drawTriangleTextureZ(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], objData.uvVectors[uvIdx1], objData.uvVectors[uvIdx2], objData.uvVectors[uvIdx3], intensity, zBuffer, texture, image);
             }
         }
     }

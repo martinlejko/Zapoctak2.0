@@ -91,3 +91,29 @@ void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, std::ve
         }
     }
 }
+void drawTriangleTextureZ(Vertex& v1, Vertex& v2, Vertex& v3, UVVector& uv1, UVVector& uv2, UVVector& uv3, float& intensity, std::vector<float>& zbuffer, TGAImage& texture, TGAImage& image) {
+    //bounding box
+    int minX = std::min(v1.x, std::min(v2.x, v3.x));
+    int minY = std::min(v1.y, std::min(v2.y, v3.y));
+    int maxX = std::max(v1.x, std::max(v2.x, v3.x));
+    int maxY = std::max(v1.y, std::max(v2.y, v3.y));
+
+    Vertex current;
+    for (current.x = minX; current.x <= maxX; current.x++) {
+        for (current.y = minY; current.y <= maxY; current.y++) {
+            Vec3 bcCoords = barycentric(v1, v2, v3, current);
+            if (bcCoords.x < 0 || bcCoords.y < 0 || bcCoords.z < 0) continue;
+            UVVector uvP = {
+                    static_cast<float>(uv1.x * bcCoords.x + uv2.x * bcCoords.y + uv3.x * bcCoords.z),
+                    static_cast<float>(uv1.y * bcCoords.x + uv2.y * bcCoords.y + uv3.y * bcCoords.z)
+            };
+            TGAColor color = texture.get(static_cast<int>(uvP.x*texture.get_width()), static_cast<int>(uvP.y * texture.get_height()));
+            float z = v1.z * bcCoords.x + v2.z * bcCoords.y + v3.z * bcCoords.z;
+            int idx = current.x + current.y * image.get_width();
+            if (zbuffer[idx] <= z) {
+                zbuffer[idx] = z;
+                image.set(current.x, current.y, TGAColor(color.r * intensity, color.g * intensity, color.b * intensity, 255));
+            }
+        }
+    }
+}

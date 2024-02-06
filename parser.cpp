@@ -60,7 +60,7 @@ WaveFrontData Parser::parseObjFile(std::string &filename) {
             objData.vertexNormals.emplace(vertexNormalIndex++, vertexNormal);
         } else if (type == "vt") {
             UVVector uvVector{};
-            iss >> uvVector.u >> uvVector.v;
+            iss >> uvVector.x >> uvVector.y;
             objData.uvVectors.emplace(uvIndex++, uvVector);
         } else if (type == "f") {
             std::vector<FaceElement> face;

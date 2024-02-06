@@ -4,20 +4,24 @@
 #include <limits>
 
 
-const int width = 800;
-const int height = 800;
+const int width = 1000;
+const int height = 1000;
 TGAColor red = TGAColor(255, 0, 0, 255);
 const Vec3 lightDirection = Vec3(0, 0, -1);
 
 int main() {
     TGAImage image(width, height, TGAImage::RGB);
-    Model model(width, height, "C:\\Users\\mlejko\\sandbox\\african_head.obj");
+    Model model(width, height, "/Users/martinlejko/Desktop/github/Zapoctak2.0/objects/diablo3_pose/diablo3_pose.obj");
 //    model.drawModelLinesOnly(image, red);
 //    model.drawModelColorfulTriangles(image);
-    model.drawModelWithShadows(image, lightDirection, true);
+//    model.drawModelWithShadows(image, lightDirection, true);
+    model.drawModelWithTexture(image, lightDirection, true);
     image.flip_vertically();
-    image.write_tga_file("output.tga");
+    image.write_tga_file("brada.tga");
 
+
+
+    //zBuffer testing generation
     TGAImage zbimage(width, height, TGAImage::GRAYSCALE);
     for (int i = 0; i < width; i++){
         for (int j = 0; j < height; j++) {

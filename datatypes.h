@@ -26,8 +26,8 @@ struct VertexNormal {
 };
 
 struct UVVector {
-    float u;
-    float v;
+    float x;
+    float y;
 };
 
 struct FaceElement {
