@@ -3,21 +3,26 @@
 #include "render.h"
 #include <limits>
 
-
+//set the parameters that you want
 const int width = 1000;
 const int height = 1000;
-TGAColor red = TGAColor(255, 0, 0, 255);
 const Vec3 lightDirection = Vec3(0, 0, -1);
 
+TGAColor red = TGAColor(255, 0, 0, 255);
+
 int main() {
+    //creation of the image that we are rendering onto
     TGAImage image(width, height, TGAImage::RGB);
-    Model model(width, height, "C:\\Users\\mlejko\\sandbox\\Zapoctak2.0\\objects\\diablo3_pose\\diablo3_pose.obj");
+    Model model(width, height, "C:\\Users\\mlejko\\sandbox\\Zapoctak2.0\\objects\\boggie\\head.obj"); //provide the obj file to render
+
+    //choose the render option
 //    model.drawModelLinesOnly(image, red);
 //    model.drawModelColorfulTriangles(image);
 //    model.drawModelWithShadows(image, lightDirection, true);
-    model.drawModelWithTexture(image, lightDirection, true);
+//    model.drawModelWithTexture(image, lightDirection, true);
     image.flip_vertically();
-    image.write_tga_file("brada.tga");
+    image.write_tga_file("output.tga");
+
 
 
 
@@ -32,15 +37,10 @@ int main() {
     }
     zbimage.flip_vertically();
     zbimage.write_tga_file("zbuffer.tga");
+
+
     return 0;
 }
 
 
-//tests the functionality
-
-//const TGAColor white = TGAColor(255, 255, 255, 255);
-//Vertex v1 = {80, 10, 10};
-//Vertex v2 = {20, 70, 20};
-//Vertex v3 = {70, 80, 30};
-//drawSimpleTriangle(v1, v2, v3, image, zBuffer);
-//drawLine(v1, v2, white, image);
+//also you can use drawline or drawTriangle functions
