@@ -11,7 +11,7 @@ const Vec3 lightDirection = Vec3(0, 0, -1);
 
 int main() {
     TGAImage image(width, height, TGAImage::RGB);
-    Model model(width, height, "/Users/martinlejko/Desktop/github/Zapoctak2.0/objects/diablo3_pose/diablo3_pose.obj");
+    Model model(width, height, "C:\\Users\\mlejko\\sandbox\\Zapoctak2.0\\objects\\diablo3_pose\\diablo3_pose.obj");
 //    model.drawModelLinesOnly(image, red);
 //    model.drawModelColorfulTriangles(image);
 //    model.drawModelWithShadows(image, lightDirection, true);

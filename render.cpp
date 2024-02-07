@@ -84,7 +84,7 @@ void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, std::ve
             float z = v1.z * bcCoords.x + v2.z * bcCoords.y + v3.z * bcCoords.z;
             int idx = current.x + current.y * image.get_width();
 
-            if (zbuffer[idx] <= z) {
+            if (idx >= 0 && idx < zbuffer.size() && zbuffer[idx] <= z ) {
                 zbuffer[idx] = z;
                 image.set(current.x, current.y, color);
             }
@@ -110,7 +110,7 @@ void drawTriangleTextureZ(Vertex& v1, Vertex& v2, Vertex& v3, UVVector& uv1, UVV
             TGAColor color = texture.get(static_cast<int>(uvP.x*texture.get_width()), static_cast<int>(uvP.y * texture.get_height()));
             float z = v1.z * bcCoords.x + v2.z * bcCoords.y + v3.z * bcCoords.z;
             int idx = current.x + current.y * image.get_width();
-            if (zbuffer[idx] <= z) {
+            if (idx >= 0 && idx < zbuffer.size() && zbuffer[idx] <= z ) {
                 zbuffer[idx] = z;
                 image.set(current.x, current.y, TGAColor(color.r * intensity, color.g * intensity, color.b * intensity, 255));
             }
