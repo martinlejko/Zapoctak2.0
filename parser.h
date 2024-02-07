@@ -20,7 +20,6 @@ public:
 private:
     //functions for parsing Obj file
     static bool isValidFile(std::string &filename);
-    void parseTextureFile(std::string &filename);
 };
 
 

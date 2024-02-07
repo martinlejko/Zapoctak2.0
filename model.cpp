@@ -39,10 +39,6 @@ void Model::loadTexture(std::string filename, TGAImage &image) {
     image.flip_vertically();
 }
 
-TGAColor Model::diffuse(UVVector uvP) {
-    return texture.get(uvP.x, uvP.y);
-}
-
 void Model::drawModelLinesOnly(TGAImage &image, TGAColor &color) {
     //draws the model with lines only
     for (auto &face : objData.faces) {

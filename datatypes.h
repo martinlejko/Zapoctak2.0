@@ -13,11 +13,6 @@ struct Vertex {
     float y;
     float z;
 };
-struct Point2D {
-    int x;
-    int y;
-};
-
 
 struct VertexNormal {
     float x;
