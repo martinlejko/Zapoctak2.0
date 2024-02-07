@@ -35,7 +35,7 @@ To install and build the project, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/martinlejko/software-renderer.git
+   git clone https://github.com/martinlejko/simple-software-renderer.git
    cd software-renderer
    ```
 2. Since this project does not rely on external libraries.
