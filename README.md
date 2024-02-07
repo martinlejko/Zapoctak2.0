@@ -76,9 +76,8 @@ To install and build the project, follow these steps:
         ```
    
    - **Rendered Images:**
-     ![Rendered Image 1](images/rendered_image_1.tga)
-     ![Rendered Image 2](images/rendered_image_2.tga)
-     <!-- Add more images as needed -->
+     ![Rendered Image 1](images/diablo_lines.jpg)
+     ![Rendered Image 2](images/head_nm.jpg)
 
 ### Features
 
