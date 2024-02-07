@@ -14,6 +14,7 @@ Model::Model(int width, int height, std::string filename) : width(width), height
     //working with the obj file, tga texture
     Parser parser;
     objData = parser.parseObjFile(filename);
+//    parser.normalizeVectors(objData);
     originalVertices = objData.vertices;
     projectVerts(width, height, objData.vertices);
 

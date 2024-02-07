@@ -6,6 +6,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <limits>
+#include <algorithm>
 
 bool Parser::isValidFile(std::string &filename) {
     std::ifstream  file(filename);
@@ -88,4 +90,33 @@ WaveFrontData Parser::parseObjFile(std::string &filename) {
 
     }
     return objData;
+}
+
+
+void Parser::normalizeVectors(WaveFrontData &data) {
+    // Getting min and max value of vectors
+    std::vector<float> min_values(3, std::numeric_limits<float>::max());
+    std::vector<float> max_values(3, std::numeric_limits<float>::lowest());
+
+    for (const auto& vertexPair : data.vertices) {
+        const Vertex& v = vertexPair.second;  // Access the Vertex structure from the unordered_map
+        for (int i = 0; i < 3; ++i) {
+            min_values[i] = std::min(min_values[i], v.x);
+            max_values[i] = std::max(max_values[i], v.x);
+        }
+    }
+
+    // Normalize the vertex coordinates to be between -1 and 1
+    for (auto& vertexPair : data.vertices) {
+        Vertex& v = vertexPair.second;
+        for (int i = 0; i < 3; ++i) {
+            v.x = 2.0f * (v.x - min_values[i]) / (max_values[i] - min_values[i]) - 1.0f;
+        }
+        for (int i = 0; i < 3; ++i) {
+            v.y = 2.0f * (v.y - min_values[i]) / (max_values[i] - min_values[i]) - 1.0f;
+        }
+        for (int i = 0; i < 3; ++i) {
+            v.z = 2.0f * (v.z - min_values[i]) / (max_values[i] - min_values[i]) - 1.0f;
+        }
+    }
 }
