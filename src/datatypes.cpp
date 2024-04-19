@@ -153,3 +153,46 @@ void Matrix<T>::display() const {
         std::cout << std::endl;
     }
 }
+
+template<typename T>
+std::vector<T> Matrix<T>::toVector() const {
+    std::vector<T> vec;
+    vec.reserve(rows * cols);
+    for (const auto& row : data) {
+        for (const auto& val : row) {
+            vec.push_back(val);
+        }
+    }
+    return vec;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::fromVector(const std::vector<T>& vec, size_t rows, size_t cols) {
+    if (vec.size() != rows * cols) {
+        throw std::invalid_argument("Vector size does not match matrix dimensions");
+    }
+
+    Matrix<T> mat(rows, cols);
+
+    size_t index = 0;
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            mat(i, j) = vec[index++];
+        }
+    }
+
+    return mat;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::viewport(int x, int y, int w, int h, int depth) {
+    Matrix<T> m = Matrix<T>::identity(4);
+    m(0, 3) = x + w / 2.f;
+    m(1, 3) = y + h / 2.f;
+    m(2, 3) = depth / 2.f;
+
+    m(0, 0) = w / 2.f;
+    m(1, 1) = h / 2.f;
+    m(2, 2) = depth / 2.f;
+    return m;
+}

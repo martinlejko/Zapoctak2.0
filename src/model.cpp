@@ -5,7 +5,7 @@
 #include "model.h"
 #include "render.h"
 #include "parser.h"
-#include "render.h"
+#include "datatypes.h"
 #include "tgaimage.h"
 #include <iostream>
 #include <limits>
@@ -111,6 +111,9 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
     if(useZBuffer){
         for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::lowest());
     }
+    Matrix<float> projection = Matrix<float>::identity(4);
+    
+
     for(auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
         int vIdx2 = face.second[1].vertexIndex;

@@ -96,6 +96,9 @@ public:
     Matrix<T> transpose() const;
     Matrix<T> inverse() const;
     void display() const;
+    std::vector<T> toVector() const;
+    static Matrix<T> fromVector(const std::vector<T>& vec, size_t rows, size_t cols);
+    static Matrix<T> viewport(int x, int y, int w, int h, int depth = 255);
 };
 
 
