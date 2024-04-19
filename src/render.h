@@ -13,9 +13,8 @@
 void drawLine(const Vertex& v1, const Vertex& v2, const TGAColor& color, TGAImage& image);
 
 void projectVerts(int width, int height, std::unordered_map<int, Vertex>& vertices);
-Vec3 barycentric(const Vertex &v1, const Vertex &v2, const Vertex &v3, const Vertex &p);
-//simple triangle drawing functions
-void drawTriangle(const Vertex& v1, const Vertex& v2, const Vertex& v3, const TGAColor& color, TGAImage& image);
-void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, std::vector<float>& zbuffer, const TGAColor& color, TGAImage& image);
-void drawTriangleTextureZ(Vertex& v1, Vertex& v2, Vertex& v3, UVVector& uv1, UVVector& uv2, UVVector& uv3, float& intensity, std::vector<float>& zbuffer, TGAImage& texture, TGAImage& image);
+Vec3 barycentric(const TriangleData &triangle, const Vertex &p);
+void drawTriangle(const TriangleData &triangle, const TGAColor &color, TGAImage &image);
+void drawTriangleZ(const TriangleData &triangle, std::vector<float> &zbuffer, const TGAColor &color, TGAImage &image);
+void drawTriangleTextureZ(const TriangleData &triangle, const UVTriangleData &uvTriangle, float intensity, std::vector<float> &zbuffer, TGAImage &texture, TGAImage &image);
 #endif //ZAPOCTAK2_0_RENDER_H

@@ -53,9 +53,13 @@ void Model::drawModelLinesOnly(TGAImage &image, TGAColor &color) {
 void Model::drawModelColorfulTriangles(TGAImage &image) {
     //draws the model with simple triangles
     for (auto &face : objData.faces) {
+        TriangleData triangle = {
+                objData.vertices[face.second[0].vertexIndex],
+                objData.vertices[face.second[1].vertexIndex],
+                objData.vertices[face.second[2].vertexIndex]
+        };
         TGAColor colorful = TGAColor(rand() % 255, rand() % 255, rand() % 255, 255);
-        drawTriangle(objData.vertices[face.second[0].vertexIndex], objData.vertices[face.second[1].vertexIndex],
-                     objData.vertices[face.second[2].vertexIndex], colorful, image);
+        drawTriangle(triangle, colorful, image);
     }
 }
 
@@ -79,6 +83,12 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
         int vIdx2 = face.second[1].vertexIndex;
         int vIdx3 = face.second[2].vertexIndex;
 
+        TriangleData triangle = {
+                objData.vertices[vIdx1],
+                objData.vertices[vIdx2],
+                objData.vertices[vIdx3]
+        };
+
         Vec3 u = Vec3(originalVertices[vIdx3], originalVertices[vIdx1]);
         Vec3 v = Vec3(originalVertices[vIdx2], originalVertices[vIdx1]);
         Vec3 normal = u.crossProduct(v);
@@ -89,9 +99,9 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
         if (intensity > 0) {
             TGAColor color = TGAColor(255 * intensity, 255 * intensity, 255 * intensity, 255);
             if (useZBuffer) {
-                drawTriangleZ(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], zBuffer, color, image);
+                drawTriangleZ(triangle, zBuffer, color, image);
             } else {
-                drawTriangle(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], color, image);
+                drawTriangle(triangle, color, image);
             }
         }
     }
@@ -110,6 +120,18 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
         int uvIdx2 = face.second[1].textureIndex;
         int uvIdx3 = face.second[2].textureIndex;
 
+        TriangleData triangle = {
+                objData.vertices[vIdx1],
+                objData.vertices[vIdx2],
+                objData.vertices[vIdx3]
+        };
+
+        UVTriangleData uvTriangle = {
+                objData.uvVectors[uvIdx1],
+                objData.uvVectors[uvIdx2],
+                objData.uvVectors[uvIdx3]
+        };
+
         Vec3 u = Vec3(originalVertices[vIdx3], originalVertices[vIdx1]);
         Vec3 v = Vec3(originalVertices[vIdx2], originalVertices[vIdx1]);
         Vec3 normal = u.crossProduct(v);
@@ -119,7 +141,7 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
 
         if (intensity > 0) {
             if(useZBuffer){
-                drawTriangleTextureZ(objData.vertices[vIdx1], objData.vertices[vIdx2], objData.vertices[vIdx3], objData.uvVectors[uvIdx1], objData.uvVectors[uvIdx2], objData.uvVectors[uvIdx3], intensity, zBuffer, texture, image);
+                drawTriangleTextureZ(triangle, uvTriangle, intensity, zBuffer, texture, image);
             }
         }
     }

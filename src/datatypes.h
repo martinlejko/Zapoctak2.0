@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <stdexcept>
 
 struct Vertex {
     float x;
@@ -61,5 +62,42 @@ struct Vec3 {
     float dotProduct(const Vec3& v) const;
     void normalize();
 };
+
+struct TriangleData {
+    Vertex v1;
+    Vertex v2;
+    Vertex v3;
+};
+
+struct UVTriangleData {
+    UVVector uv1;
+    UVVector uv2;
+    UVVector uv3;
+};
+
+template<typename T>
+class Matrix {
+private:
+    std::vector<std::vector<T>> data;
+    size_t rows;
+    size_t cols;
+
+public:
+    Matrix(size_t rows, size_t cols);
+
+    size_t numRows() const;
+    size_t numCols() const;
+
+    T& operator()(size_t i, size_t j);
+    const T& operator()(size_t i, size_t j) const;
+
+    static Matrix<T> identity(size_t size);
+    friend Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs);
+    Matrix<T> transpose() const;
+    Matrix<T> inverse() const;
+    void display() const;
+};
+
+
 
 #endif //ZAPOCTAK2_0_DATATYPES_H

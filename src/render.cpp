@@ -52,8 +52,11 @@ Vec3 barycentric(const Vertex &v1, const Vertex &v2, const Vertex &v3, const Ver
     return Vec3(1.0f - (w.x + w.y) / w.z, w.y / w.z, w.x / w.z);
 }
 
-void drawTriangle(const Vertex &v1, const Vertex &v2, const Vertex &v3, const TGAColor &color, TGAImage &image) {
-    //bounding box
+void drawTriangle(const TriangleData &triangle, const TGAColor &color, TGAImage &image) {
+    const Vertex &v1 = triangle.v1;
+    const Vertex &v2 = triangle.v2;
+    const Vertex &v3 = triangle.v3;
+    // bounding box
     int minX = std::min(v1.x, std::min(v2.x, v3.x));
     int minY = std::min(v1.y, std::min(v2.y, v3.y));
     int maxX = std::max(v1.x, std::max(v2.x, v3.x));
@@ -64,13 +67,16 @@ void drawTriangle(const Vertex &v1, const Vertex &v2, const Vertex &v3, const TG
         for (current.y = minY; current.y <= maxY; current.y++) {
             Vec3 bcCoords = barycentric(v1, v2, v3, current);
             if (bcCoords.x < 0 || bcCoords.y < 0 || bcCoords.z < 0) continue;
-                image.set(current.x, current.y, color);
+            image.set(current.x, current.y, color);
         }
     }
 }
 
-void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, std::vector<float>& zbuffer, const TGAColor& color, TGAImage& image) {
-    //bounding box
+void drawTriangleZ(const TriangleData &triangle, std::vector<float>& zbuffer, const TGAColor& color, TGAImage& image) {
+    const Vertex &v1 = triangle.v1;
+    const Vertex &v2 = triangle.v2;
+    const Vertex &v3 = triangle.v3;
+    // bounding box
     int minX = std::min(v1.x, std::min(v2.x, v3.x));
     int minY = std::min(v1.y, std::min(v2.y, v3.y));
     int maxX = std::max(v1.x, std::max(v2.x, v3.x));
@@ -91,8 +97,12 @@ void drawTriangleZ(const Vertex& v1, const Vertex& v2, const Vertex& v3, std::ve
         }
     }
 }
-void drawTriangleTextureZ(Vertex& v1, Vertex& v2, Vertex& v3, UVVector& uv1, UVVector& uv2, UVVector& uv3, float& intensity, std::vector<float>& zbuffer, TGAImage& texture, TGAImage& image) {
-    //bounding box
+
+void drawTriangleTextureZ(const TriangleData &triangle, const UVTriangleData &uvTriangle, float intensity, std::vector<float> &zbuffer, TGAImage &texture, TGAImage &image) {
+    const Vertex &v1 = triangle.v1;
+    const Vertex &v2 = triangle.v2;
+    const Vertex &v3 = triangle.v3;
+    // bounding box
     int minX = std::min(v1.x, std::min(v2.x, v3.x));
     int minY = std::min(v1.y, std::min(v2.y, v3.y));
     int maxX = std::max(v1.x, std::max(v2.x, v3.x));
@@ -103,6 +113,9 @@ void drawTriangleTextureZ(Vertex& v1, Vertex& v2, Vertex& v3, UVVector& uv1, UVV
         for (current.y = minY; current.y <= maxY; current.y++) {
             Vec3 bcCoords = barycentric(v1, v2, v3, current);
             if (bcCoords.x < 0 || bcCoords.y < 0 || bcCoords.z < 0) continue;
+            const UVVector &uv1 = uvTriangle.uv1;
+            const UVVector &uv2 = uvTriangle.uv2;
+            const UVVector &uv3 = uvTriangle.uv3;
             UVVector uvP = {
                     static_cast<float>(uv1.x * bcCoords.x + uv2.x * bcCoords.y + uv3.x * bcCoords.z),
                     static_cast<float>(uv1.y * bcCoords.x + uv2.y * bcCoords.y + uv3.y * bcCoords.z)

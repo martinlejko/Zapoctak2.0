@@ -13,13 +13,13 @@ TGAColor red = TGAColor(255, 0, 0, 255);
 int main() {
     //creation of the image that we are rendering onto
     TGAImage image(width, height, TGAImage::RGB);
-    Model model(width, height, "C:\\Users\\mlejko\\sandbox\\Zapoctak2.0\\objects\\boggie\\head.obj"); //provide the obj file to render
+    Model model(width, height, "C:\\Users\\mlejko\\sandbox\\simple-software-renderer\\objects\\diablo3_pose\\diablo3_pose.obj"); //provide the obj file to render
 
     //choose the render option
 //    model.drawModelLinesOnly(image, red);
 //    model.drawModelColorfulTriangles(image);
 //    model.drawModelWithShadows(image, lightDirection, true);
-//    model.drawModelWithTexture(image, lightDirection, true);
+    model.drawModelWithTexture(image, lightDirection, true);
     image.flip_vertically();
     image.write_tga_file("output.tga");
 
