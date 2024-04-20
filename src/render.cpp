@@ -4,7 +4,6 @@
 
 #include "render.h"
 #include "datatypes.h"
-#include "model.h"
 #include <iostream>
 
 void drawLine(const Vertex &v1, const Vertex &v2, const TGAColor &color, TGAImage &image) {
@@ -48,8 +47,8 @@ Vec3 barycentric(const Vertex &v1, const Vertex &v2, const Vertex &v3, const Ver
     Vec3 u = Vec3(v3.x - v1.x, v2.x - v1.x, v1.x - p.x);
     Vec3 v = Vec3(v3.y - v1.y, v2.y - v1.y, v1.y - p.y);
     Vec3 w = u.crossProduct(v);
-    if (std::abs(w.z) < 1) return Vec3(-1, 1, 1);
-    return Vec3(1.0f - (w.x + w.y) / w.z, w.y / w.z, w.x / w.z);
+    if (std::abs(w.z) < 1) return {-1, 1, 1};
+    return {1.0f - (w.x + w.y) / w.z, w.y / w.z, w.x / w.z};
 }
 
 void drawTriangle(const TriangleData &triangle, const TGAColor &color, TGAImage &image) {
@@ -62,7 +61,7 @@ void drawTriangle(const TriangleData &triangle, const TGAColor &color, TGAImage 
     int maxX = std::max(v1.x, std::max(v2.x, v3.x));
     int maxY = std::max(v1.y, std::max(v2.y, v3.y));
 
-    Vertex current;
+    Vertex current{};
     for (current.x = minX; current.x <= maxX; current.x++) {
         for (current.y = minY; current.y <= maxY; current.y++) {
             Vec3 bcCoords = barycentric(v1, v2, v3, current);
@@ -82,7 +81,7 @@ void drawTriangleZ(const TriangleData &triangle, std::vector<float>& zbuffer, co
     int maxX = std::max(v1.x, std::max(v2.x, v3.x));
     int maxY = std::max(v1.y, std::max(v2.y, v3.y));
 
-    Vertex current;
+    Vertex current{};
     for (current.x = minX; current.x <= maxX; current.x++) {
         for (current.y = minY; current.y <= maxY; current.y++) {
             Vec3 bcCoords = barycentric(v1, v2, v3, current);
@@ -108,7 +107,7 @@ void drawTriangleTextureZ(const TriangleData &triangle, const UVTriangleData &uv
     int maxX = std::max(v1.x, std::max(v2.x, v3.x));
     int maxY = std::max(v1.y, std::max(v2.y, v3.y));
 
-    Vertex current;
+    Vertex current{};
     for (current.x = minX; current.x <= maxX; current.x++) {
         for (current.y = minY; current.y <= maxY; current.y++) {
             Vec3 bcCoords = barycentric(v1, v2, v3, current);

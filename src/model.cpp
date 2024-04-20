@@ -12,29 +12,18 @@
 
 Model::Model(int width, int height, std::string filename) : width(width), height(height) {
     //working with the obj file, tga texture
-    Parser parser;
-    objData = parser.parseObjFile(filename);
-//    parser.normalizeVectors(objData);
+    objData = Parser::parseObjFile(filename);
     originalVertices = objData.vertices;
     projectVerts(width, height, objData.vertices);
 
     //zBuffer space allocation
     zBuffer.resize(width * height);
-
-    //loading texture
     loadTexture(filename, texture);
-
-    //testing the parser
-//    std::cout << "Model created" << std::endl;
-//    parser.printDataInfo(objData);
-//    parser.printNthFace(objData, 1);
-//    parser.printNthVertex(objData, 1);
 }
 
-
-void Model::loadTexture(std::string filename, TGAImage &image) {
+void Model::loadTexture(const std::string& filename, TGAImage &image) {
     std::string textureFile = filename.substr(0, filename.size() - 4) + "_diffuse.tga"; // -4 because of .obj
-    std::cout << "texture file " << textureFile << " loading " << (image.read_tga_file(textureFile.c_str()) ? "ok" : "failed") << std::endl;
+    std::cout << "texture file " << textureFile << " loading " << (image.read_tga_file(textureFile) ? "ok" : "failed") << std::endl;
     image.flip_vertically();
 }
 
@@ -57,15 +46,12 @@ void Model::drawModelColorfulTriangles(TGAImage &image) {
                 objData.vertices[face.second[1].vertexIndex],
                 objData.vertices[face.second[2].vertexIndex]
         };
-        TGAColor colorful = {static_cast<std::uint8_t>(rand() % 255),
-                             static_cast<std::uint8_t>(rand() % 255),
-                             static_cast<std::uint8_t>(rand() % 255),
-                             255};
+        TGAColor colorful = genereateColor();
         drawTriangle(triangle, colorful, image);
     }
 }
 
-void Model::printZBuffer(const std::vector<float> zbuffer, int width, int height) {
+void Model::printZBuffer(const std::vector<float>& zbuffer, int width, int height) {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             int idx = x + y * width;
@@ -77,8 +63,11 @@ void Model::printZBuffer(const std::vector<float> zbuffer, int width, int height
 }
 
 void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
-    if(useZBuffer) {
-        for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::lowest());
+    if (useZBuffer) {
+        int numPixels = width * height;
+        for (int i = numPixels; i > 0; --i) {
+            zBuffer[i - 1] = std::numeric_limits<float>::lowest();
+        }
     }
     for (auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
@@ -113,44 +102,24 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
 }
 
 void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
-//    lightDirection.normalize();
+    lightDirection.normalize();
     Vec3 eye(1,1,3);
     Vec3 center(0,0,0);
 
-    if(useZBuffer){
-        for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::lowest());
+    if (useZBuffer) {
+        int numPixels = width * height;
+        for (int i = numPixels; i > 0; --i) {
+            zBuffer[i - 1] = std::numeric_limits<float>::lowest();
+        }
     }
 //    Matrix<float> ModelView = Matrix<float>::lookat(eye, center, Vec3(0, 1, 0));
     Matrix<float> Projection = Matrix<float>::identity(4);
     Matrix<float> ViewPort = Matrix<float>::viewport((width - width*2)/2, (height - height*2)/2, width*2, height*2); // this one is good cetered
 //    Matrix<float> ViewPort = Matrix<float>::viewport(width/8, height/8, width*3/4, height*3/4);
+
     Projection(3,2) = -1.0f / (eye - center).norm();
-//    float viewAngle = 0.5f; // Example viewing angle
-//    float rotationAngle = 0.5f; // Example rotation angle around y-axis
-//
-//    Matrix<float> ViewAngleRotation(4, 4);
-//    ViewAngleRotation(0, 0) = cos(viewAngle);
-//    ViewAngleRotation(0, 1) = 0;
-//    ViewAngleRotation(0, 2) = -sin(viewAngle);
-//    ViewAngleRotation(1, 0) = 0;
-//    ViewAngleRotation(1, 1) = 1.0f;
-//    ViewAngleRotation(1, 2) = 0;
-//    ViewAngleRotation(2, 0) = sin(viewAngle);
-//    ViewAngleRotation(2, 1) = 0;
-//    ViewAngleRotation(2, 2) = cos(viewAngle);
-//    ViewAngleRotation(3, 3) = 1.0f;
-//
-//    Matrix<float> YAxisRotation(4, 4);
-//    YAxisRotation(0, 0) = cos(rotationAngle);
-//    YAxisRotation(0, 2) = sin(rotationAngle);
-//    YAxisRotation(1, 1) = 1.0f;
-//    YAxisRotation(2, 0) = -sin(rotationAngle);
-//    YAxisRotation(2, 2) = cos(rotationAngle);
-//    YAxisRotation(3, 3) = 1.0f;
-//
-//    Matrix<float> totalRotation = YAxisRotation * ViewAngleRotation;
-//
-//    ViewPort = totalRotation * ViewPort;
+
+
     Matrix<float> View = (ViewPort * Projection);
     for(auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;

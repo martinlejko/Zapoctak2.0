@@ -311,7 +311,6 @@ Matrix<T> Matrix<T>::lookat(const Vec3 &eye, const Vec3 &center, const Vec3 &up)
 
 template<typename T>
 Matrix<T> multiply(const Matrix<T>& lhs, const Matrix<T>& mid, const Matrix<T>& rhs) {
-    // Check dimensions
     if (lhs.numCols() != mid.numRows() || mid.numCols() != rhs.numRows())
         throw std::invalid_argument("Matrix dimensions mismatch");
 

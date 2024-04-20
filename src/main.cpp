@@ -1,6 +1,5 @@
 #include "tgaimage.h"
 #include "model.h"
-#include "render.h"
 #include <limits>
 #include "datatypes.h"
 
@@ -15,14 +14,12 @@ int main() {
     Model model(width, height, "/Users/martinlejko/Desktop/github/ZS2023/simple-software-renderer/objects/head/african_head.obj"); //provide the obj file to render
 
     //choose the render option
+
 //    model.drawModelLinesOnly(image, red);
 //    model.drawModelColorfulTriangles(image);
 //    model.drawModelWithShadows(image, lightDirection, true);
     model.drawModelWithTexture(image, lightDirection, true);
     image.write_tga_file("output.tga");
-
-
-
 
     //zBuffer testing generation
     TGAImage zbimage(width, height, TGAImage::GRAYSCALE);
@@ -33,9 +30,7 @@ int main() {
             }
         }
     }
-    zbimage.flip_vertically();
     zbimage.write_tga_file("zbuffer.tga");
-
 
     return 0;
 }

@@ -4,7 +4,6 @@
 
 #include "datatypes.h"
 #include <cmath>
-#include <iostream>
 
 int Vec2::crossProduct(const Vec2 &v) const {
     return x * v.y - y * v.x;

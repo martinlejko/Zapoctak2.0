@@ -20,9 +20,9 @@ public:
     void drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZBuffer);
     TGAImage texture;
     std::vector<float> zBuffer;
-    void printZBuffer(const std::vector<float> zBuffer, int width, int height);
+    static void printZBuffer(const std::vector<float>& zBuffer, int width, int height);
 private:
-    void loadTexture(std::string filename, TGAImage &image);
+    static  void loadTexture(const std::string& filename, TGAImage &image);
     int width;
     int height;
     std::unordered_map<int, Vertex> originalVertices;

@@ -4,11 +4,12 @@
 
 #include <iostream>
 #include <cstring>
+#include <random>
 #include "tgaimage.h"
 
 TGAImage::TGAImage(const int w, const int h, const int bpp) : w(w), h(h), bpp(bpp), data(w*h*bpp, 0) {}
 
-bool TGAImage::read_tga_file(const std::string filename) {
+bool TGAImage::read_tga_file(const std::string& filename) {
     std::ifstream in;
     in.open(filename, std::ios::binary);
     if (!in.is_open()) {
@@ -102,7 +103,7 @@ bool TGAImage::load_rle_data(std::ifstream &in) {
     return true;
 }
 
-bool TGAImage::write_tga_file(const std::string filename, const bool vflip, const bool rle) const {
+bool TGAImage::write_tga_file(const std::string& filename, const bool vflip, const bool rle) const {
     constexpr std::uint8_t developer_area_ref[4] = {0, 0, 0, 0};
     constexpr std::uint8_t extension_area_ref[4] = {0, 0, 0, 0};
     constexpr std::uint8_t footer[18] = {'T','R','U','E','V','I','S','I','O','N','-','X','F','I','L','E','.','\0'};
@@ -192,7 +193,7 @@ bool TGAImage::unload_rle_data(std::ofstream &out) const {
 }
 
 TGAColor TGAImage::get(const int x, const int y) const {
-    if (!data.size() || x<0 || y<0 || x>=w || y>=h)
+    if (data.empty() || x<0 || y<0 || x>=w || y>=h)
         return {};
     TGAColor ret = {0, 0, 0, 0, bpp};
     const std::uint8_t *p = data.data()+(x+y*w)*bpp;
@@ -201,7 +202,7 @@ TGAColor TGAImage::get(const int x, const int y) const {
 }
 
 void TGAImage::set(int x, int y, const TGAColor &c) {
-    if (!data.size() || x<0 || y<0 || x>=w || y>=h) return;
+    if (data.empty() || x<0 || y<0 || x>=w || y>=h) return;
     memcpy(data.data()+(x+y*w)*bpp, c.bgra, bpp);
 }
 
@@ -229,4 +230,16 @@ int TGAImage::height() const {
     return h;
 }
 
+TGAColor genereateColor() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<std::uint8_t> dist(0, 255);
+
+    // Generate random values for each color channel
+    std::uint8_t r = dist(gen);
+    std::uint8_t g = dist(gen);
+    std::uint8_t b = dist(gen);
+
+    return {r, g, b, 255};
+}
 

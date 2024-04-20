@@ -16,7 +16,7 @@ public:
     static void printDataInfo(WaveFrontData &data);
     static void printNthVertex(WaveFrontData &data, int n);
     static void printNthFace(WaveFrontData &data, int n);
-    void normalizeVectors(WaveFrontData &data);
+    static void normalizeVectors(WaveFrontData &data);
 private:
     //functions for parsing Obj file
     static bool isValidFile(std::string &filename);
