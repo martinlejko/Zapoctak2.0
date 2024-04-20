@@ -10,7 +10,7 @@
 #include <iostream>
 #include <limits>
 
-Model::Model(int width, int height, std::string filename) : width(width), height(height) {
+Model::Model(std::string filename, int width, int height) : width(width), height(height), image(width, height, TGAImage::RGB) {
     //working with the obj file, tga texture
     objData = Parser::parseObjFile(filename);
     originalVertices = objData.vertices;
@@ -27,7 +27,7 @@ void Model::loadTexture(const std::string& filename, TGAImage &image) {
     image.flip_vertically();
 }
 
-void Model::drawModelLinesOnly(TGAImage &image, TGAColor &color) {
+void Model::drawModelLinesOnly(TGAColor &color) {
     //draws the model with lines only
     for (auto &face : objData.faces) {
         for (int i = 0; i < 3; i++) {
@@ -36,9 +36,10 @@ void Model::drawModelLinesOnly(TGAImage &image, TGAColor &color) {
             drawLine(objData.vertices[v1], objData.vertices[v2], color, image);
         }
     }
+    image.write_tga_file("output_line.tga");
 }
 
-void Model::drawModelColorfulTriangles(TGAImage &image) {
+void Model::drawModelColorfulTriangles() {
     //draws the model with simple triangles
     for (auto &face : objData.faces) {
         TriangleData triangle = {
@@ -49,6 +50,7 @@ void Model::drawModelColorfulTriangles(TGAImage &image) {
         TGAColor colorful = genereateColor();
         drawTriangle(triangle, colorful, image);
     }
+    image.write_tga_file("output_color_triangle.tga");
 }
 
 void Model::printZBuffer(const std::vector<float>& zbuffer, int width, int height) {
@@ -60,9 +62,10 @@ void Model::printZBuffer(const std::vector<float>& zbuffer, int width, int heigh
             }
         }
     }
+
 }
 
-void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
+void Model::drawModelWithShadows(Vec3 lightDirection, bool useZBuffer) {
     if (useZBuffer) {
         int numPixels = width * height;
         for (int i = numPixels; i > 0; --i) {
@@ -99,9 +102,10 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
             }
         }
     }
+    image.write_tga_file("output_shadow.tga");
 }
 
-void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
+void Model::drawModelWithTexture(Vec3 lightDirection, bool useZBuffer) {
     lightDirection.normalize();
     Vec3 eye(1,1,3);
     Vec3 center(0,0,0);
@@ -167,4 +171,5 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
             }
         }
     }
+    image.write_tga_file("output_texture.tga");
 }

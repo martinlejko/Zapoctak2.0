@@ -13,11 +13,11 @@
 
 class Model {
 public:
-    Model(int width, int height, std::string filename);
-    void drawModelLinesOnly(TGAImage &image, TGAColor &color);
-    void drawModelColorfulTriangles(TGAImage &image);
-    void drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZBuffer);
-    void drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZBuffer);
+    Model(std::string filename, int width = 800, int height = 800);
+    void drawModelLinesOnly(TGAColor &color);
+    void drawModelColorfulTriangles();
+    void drawModelWithShadows(Vec3 lightDirection, bool useZBuffer = true);
+    void drawModelWithTexture(Vec3 lightDirection, bool useZBuffer = true);
     TGAImage texture;
     std::vector<float> zBuffer;
     static void printZBuffer(const std::vector<float>& zBuffer, int width, int height);
@@ -25,6 +25,7 @@ private:
     static  void loadTexture(const std::string& filename, TGAImage &image);
     int width;
     int height;
+    TGAImage image;
     std::unordered_map<int, Vertex> originalVertices;
     WaveFrontData objData;
 };
