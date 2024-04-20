@@ -1,4 +1,10 @@
-#pragma once
+//
+// Created by Martin Lejko on 31/01/2024.
+//
+
+#ifndef ZAPOCTAK2_0_TGAIMAGE_H
+#define ZAPOCTAK2_0_TGAIMAGE_H
+
 #include <cstdint>
 #include <fstream>
 #include <vector>
@@ -23,12 +29,6 @@ struct TGAHeader {
 struct TGAColor {
     std::uint8_t bgra[4] = {0,0,0,0};
     std::uint8_t bytespp = 4;
-//    TGAColor(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha = 255) {
-//        bgra[2] = red;
-//        bgra[1] = green;
-//        bgra[0] = blue;
-//        bgra[3] = alpha;
-//    }
     std::uint8_t& operator[](const int i) { return bgra[i]; }
 };
 
@@ -54,4 +54,6 @@ private:
     std::uint8_t bpp = 0;
     std::vector<std::uint8_t> data = {};
 };
+
+#endif //ZAPOCTAK2_0_TGAIMAGE_H
 
