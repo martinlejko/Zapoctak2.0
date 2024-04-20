@@ -24,7 +24,6 @@ Model::Model(int width, int height, std::string filename) : width(width), height
     //loading texture
     loadTexture(filename, texture);
 
-
     //testing the parser
 //    std::cout << "Model created" << std::endl;
 //    parser.printDataInfo(objData);
@@ -108,12 +107,19 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
 }
 
 void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
+//    lightDirection.normalize();
+    Vec3 eye(3,1,1);
+    Vec3 center(0,0,0);
+
     if(useZBuffer){
         for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::lowest());
     }
+//    Matrix<float> ModelView = Matrix<float>::lookat(eye, center, Vec3(0, 1, 0));
     Matrix<float> Projection = Matrix<float>::identity(4);
-    Matrix<float> ViewPort = Matrix<float>::viewport((width - width*2)/2, (height - height*2)/2, width*2, height*2);
-//    Projection(3, 2) = -1.0f / -1.0f;
+    Matrix<float> ViewPort = Matrix<float>::viewport((width - width*2)/2, (height - height*2)/2, width*2, height*2); // this one is good cetered
+//    Matrix<float> ViewPort = Matrix<float>::viewport(width/8, height/8, width*3/4, height*3/4);
+//    Projection(3, 2) = -1.0f / 3.0f;
+    Projection(3,2) = -1.0f / (eye - center).norm();
 //    float viewAngle = 0.5f; // Example viewing angle
 //    float rotationAngle = 0.5f; // Example rotation angle around y-axis
 //
@@ -140,7 +146,7 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
 //    Matrix<float> totalRotation = YAxisRotation * ViewAngleRotation;
 //
 //    ViewPort = totalRotation * ViewPort;
-
+    Matrix<float> View = (ViewPort * Projection);
     for(auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
         int vIdx2 = face.second[1].vertexIndex;
@@ -156,9 +162,9 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
                 objData.vertices[vIdx3]
         };
 
-        triangle.v1 = toVertex(ViewPort * Projection * toMatrix(triangle.v1));
-        triangle.v2 = toVertex(ViewPort * Projection * toMatrix(triangle.v2));
-        triangle.v3 = toVertex(ViewPort * Projection * toMatrix(triangle.v3));
+        triangle.v1 = toVertex(View * toMatrix(triangle.v1));
+        triangle.v2 = toVertex(View * toMatrix(triangle.v2));
+        triangle.v3 = toVertex(View * toMatrix(triangle.v3));
 
         triangle.v1.x = (triangle.v1.x + 1) / 1000;
         triangle.v1.y = (triangle.v1.y + 1) / 1000;

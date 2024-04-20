@@ -2,12 +2,12 @@
 #include "model.h"
 #include "render.h"
 #include <limits>
+#include "datatypes.h"
 
 //set the parameters that you want
-const int width = 1000;
-const int height = 1000;
-const Vec3 lightDirection = Vec3(0, 0, -1);
-
+const int width = 800;
+const int height = 800;
+Vec3 lightDirection = Vec3(0, 0, -1);
 TGAColor red = TGAColor(255, 0, 0, 255);
 
 int main() {

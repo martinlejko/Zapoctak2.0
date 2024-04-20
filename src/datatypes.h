@@ -62,6 +62,33 @@ struct Vec3 {
     Vec3 crossProduct(const Vec3& v) const;
     float dotProduct(const Vec3& v) const;
     void normalize();
+    float norm () const { return std::sqrt(x*x+y*y+z*z); }
+
+    Vec3 operator-(const Vec3& v) const {
+        return Vec3(x - v.x, y - v.y, z - v.z);
+    }
+
+    float& operator[](int index) {
+        if (index == 0)
+            return x;
+        else if (index == 1)
+            return y;
+        else if (index == 2)
+            return z;
+        else
+            throw std::out_of_range("Index out of range for Vec3");
+    }
+
+    const float& operator[](int index) const {
+        if (index == 0)
+            return x;
+        else if (index == 1)
+            return y;
+        else if (index == 2)
+            return z;
+        else
+            throw std::out_of_range("Index out of range for Vec3");
+    }
 };
 
 struct TriangleData {
@@ -101,8 +128,7 @@ public:
     Matrix<T> inverse() const;
     void display() const;
     static Matrix<T> viewport(int x, int y, int w, int h, int depth = 255);
-
-
+    static Matrix<T> lookat(const Vec3 &eye, const Vec3 &center, const Vec3 &up);
 };
 
 static Matrix<float> toMatrix(const Vertex& v);
@@ -260,6 +286,29 @@ Matrix<T> Matrix<T>::viewport(int x, int y, int w, int h, int depth) {
     m(2, 2) = depth / 2.f;
     return m;
 }
+
+template<typename T>
+Matrix<T> Matrix<T>::lookat(const Vec3 &eye, const Vec3 &center, const Vec3 &up) {
+    Vec3 z = (eye - center);
+    z.normalize();
+    Vec3 x = up.crossProduct(z);
+    x.normalize();
+    Vec3 y = z.crossProduct(x);
+    y.normalize();
+
+    Matrix<T> Minv = Matrix<T>::identity(4);
+    Matrix<T> Tr = Matrix<T>::identity(4);
+    for (int i = 0; i < 3; i++) {
+        Minv(0, i) = x[i];
+        Minv(1, i) = y[i];
+        Minv(2, i) = z[i];
+        Tr(3, i) = -center[i];
+    }
+    return Minv * Tr;
+}
+
+
+
 template<typename T>
 Matrix<T> multiply(const Matrix<T>& lhs, const Matrix<T>& mid, const Matrix<T>& rhs) {
     // Check dimensions
@@ -298,4 +347,5 @@ static Matrix<float> toMatrix(const Vertex& v) {
 static Vertex toVertex(const Matrix<float>& m) {
     return {m(0, 0) / m(3, 0), m(1, 0) / m(3, 0), m(2, 0) / m(3, 0)};
 }
+
 #endif //ZAPOCTAK2_0_DATATYPES_H
