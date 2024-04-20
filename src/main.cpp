@@ -8,8 +8,7 @@
 const int width = 800;
 const int height = 800;
 Vec3 lightDirection = Vec3(0, 0, -1);
-TGAColor red = TGAColor(255, 0, 0, 255);
-
+TGAColor red = {255, 0, 0, 255};
 int main() {
     //creation of the image that we are rendering onto
     TGAImage image(width, height, TGAImage::RGB);
@@ -20,7 +19,6 @@ int main() {
 //    model.drawModelColorfulTriangles(image);
 //    model.drawModelWithShadows(image, lightDirection, true);
     model.drawModelWithTexture(image, lightDirection, true);
-    image.flip_vertically();
     image.write_tga_file("output.tga");
 
 
@@ -31,7 +29,7 @@ int main() {
     for (int i = 0; i < width; i++){
         for (int j = 0; j < height; j++) {
             if (model.zBuffer[i + j * width] != std::numeric_limits<float>::lowest()) {
-                zbimage.set(i, j, TGAColor(255,255,255, 1));
+                zbimage.set(i, j, TGAColor{255,255,255, 1});
             }
         }
     }

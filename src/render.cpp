@@ -88,7 +88,7 @@ void drawTriangleZ(const TriangleData &triangle, std::vector<float>& zbuffer, co
             Vec3 bcCoords = barycentric(v1, v2, v3, current);
             if (bcCoords.x < 0 || bcCoords.y < 0 || bcCoords.z < 0) continue;
             float z = v1.z * bcCoords.x + v2.z * bcCoords.y + v3.z * bcCoords.z;
-            int idx = current.x + current.y * image.get_width();
+            int idx = current.x + current.y * image.width();
 
             if (idx >= 0 && idx < zbuffer.size() && zbuffer[idx] <= z ) {
                 zbuffer[idx] = z;
@@ -120,12 +120,16 @@ void drawTriangleTextureZ(const TriangleData &triangle, const UVTriangleData &uv
                     static_cast<float>(uv1.x * bcCoords.x + uv2.x * bcCoords.y + uv3.x * bcCoords.z),
                     static_cast<float>(uv1.y * bcCoords.x + uv2.y * bcCoords.y + uv3.y * bcCoords.z)
             };
-            TGAColor color = texture.get(static_cast<int>(uvP.x*texture.get_width()), static_cast<int>(uvP.y * texture.get_height()));
+            TGAColor color = texture.get(static_cast<int>(uvP.x*texture.width()), static_cast<int>(uvP.y * texture.height()));
             float z = v1.z * bcCoords.x + v2.z * bcCoords.y + v3.z * bcCoords.z;
-            int idx = current.x + current.y * image.get_width();
+            int idx = current.x + current.y * image.width();
             if (idx >= 0 && idx < zbuffer.size() && zbuffer[idx] <= z ) {
                 zbuffer[idx] = z;
-                image.set(current.x, current.y, TGAColor(color.r * intensity, color.g * intensity, color.b * intensity, 255));
+                TGAColor newColor = {static_cast<std::uint8_t>(color[0] * intensity),
+                                     static_cast<std::uint8_t>(color[1] * intensity),
+                                     static_cast<std::uint8_t>(color[2] * intensity),
+                                     255};
+                image.set(current.x, current.y, newColor);
             }
         }
     }

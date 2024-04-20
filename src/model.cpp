@@ -57,7 +57,10 @@ void Model::drawModelColorfulTriangles(TGAImage &image) {
                 objData.vertices[face.second[1].vertexIndex],
                 objData.vertices[face.second[2].vertexIndex]
         };
-        TGAColor colorful = TGAColor(rand() % 255, rand() % 255, rand() % 255, 255);
+        TGAColor colorful = {static_cast<std::uint8_t>(rand() % 255),
+                             static_cast<std::uint8_t>(rand() % 255),
+                             static_cast<std::uint8_t>(rand() % 255),
+                             255};
         drawTriangle(triangle, colorful, image);
     }
 }
@@ -96,7 +99,10 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
         float intensity = normal.dotProduct(lightDirection);
 
         if (intensity > 0) {
-            TGAColor color = TGAColor(255 * intensity, 255 * intensity, 255 * intensity, 255);
+            TGAColor color;
+            color[2] = static_cast<std::uint8_t>(255 * intensity);
+            color[1] = static_cast<std::uint8_t>(255 * intensity);
+            color[0] = static_cast<std::uint8_t>(255 * intensity);
             if (useZBuffer) {
                 drawTriangleZ(triangle, zBuffer, color, image);
             } else {
@@ -108,7 +114,7 @@ void Model::drawModelWithShadows(TGAImage &image, Vec3 lightDirection, bool useZ
 
 void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZBuffer) {
 //    lightDirection.normalize();
-    Vec3 eye(3,1,1);
+    Vec3 eye(1,1,3);
     Vec3 center(0,0,0);
 
     if(useZBuffer){
@@ -118,7 +124,6 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
     Matrix<float> Projection = Matrix<float>::identity(4);
     Matrix<float> ViewPort = Matrix<float>::viewport((width - width*2)/2, (height - height*2)/2, width*2, height*2); // this one is good cetered
 //    Matrix<float> ViewPort = Matrix<float>::viewport(width/8, height/8, width*3/4, height*3/4);
-//    Projection(3, 2) = -1.0f / 3.0f;
     Projection(3,2) = -1.0f / (eye - center).norm();
 //    float viewAngle = 0.5f; // Example viewing angle
 //    float rotationAngle = 0.5f; // Example rotation angle around y-axis
