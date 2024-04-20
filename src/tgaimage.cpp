@@ -243,3 +243,6 @@ TGAColor genereateColor() {
     return {r, g, b, 255};
 }
 
+void TGAImage::clear() {
+    std::fill(data.begin(), data.end(), 0);
+}

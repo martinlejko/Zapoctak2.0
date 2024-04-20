@@ -17,10 +17,11 @@ public:
     void drawModelLinesOnly(TGAColor &color);
     void drawModelColorfulTriangles();
     void drawModelWithShadows(Vec3 lightDirection, bool useZBuffer = true);
-    void drawModelWithTexture(Vec3 lightDirection, bool useZBuffer = true);
+    void drawModelWithTexture(Vec3 lightDirection, const Vec3 &pov = {1,1,3}, bool useZBuffer = true);
     TGAImage texture;
     std::vector<float> zBuffer;
     static void printZBuffer(const std::vector<float>& zBuffer, int width, int height);
+    void centerModel();
 private:
     static  void loadTexture(const std::string& filename, TGAImage &image);
     int width;

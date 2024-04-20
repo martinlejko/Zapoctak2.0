@@ -347,4 +347,13 @@ static Vertex toVertex(const Matrix<float>& m) {
     return {m(0, 0) / m(3, 0), m(1, 0) / m(3, 0), m(2, 0) / m(3, 0)};
 }
 
+struct BoundingBox {
+    float minX;
+    float maxX;
+    float minY;
+    float maxY;
+    float minZ;
+    float maxZ;
+};
+BoundingBox calculateBoundingBox(const WaveFrontData& objData);
 #endif //ZAPOCTAK2_0_DATATYPES_H

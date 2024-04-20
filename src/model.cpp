@@ -65,7 +65,22 @@ void Model::printZBuffer(const std::vector<float>& zbuffer, int width, int heigh
 
 }
 
+void Model::centerModel() {
+    BoundingBox bbox = calculateBoundingBox(objData);
+    float x = (bbox.maxX + bbox.minX) / 2;
+    float y = (bbox.maxY + bbox.minY) / 2;
+    float z = (bbox.maxZ + bbox.minZ) / 2;
+    Vec3 center = {x, y, z};
+    for (auto &vertex : objData.vertices) {
+        vertex.second.x -= center.x;
+        vertex.second.y -= center.y;
+        vertex.second.z -= center.z;
+    }
+
+}
+
 void Model::drawModelWithShadows(Vec3 lightDirection, bool useZBuffer) {
+    image.clear();
     if (useZBuffer) {
         int numPixels = width * height;
         for (int i = numPixels; i > 0; --i) {
@@ -105,26 +120,68 @@ void Model::drawModelWithShadows(Vec3 lightDirection, bool useZBuffer) {
     image.write_tga_file("output_shadow.tga");
 }
 
-void Model::drawModelWithTexture(Vec3 lightDirection, bool useZBuffer) {
+void Model::drawModelWithTexture(Vec3 lightDirection, const Vec3 &pov, bool useZBuffer) {
+    centerModel();
+    image.clear();
     lightDirection.normalize();
-    Vec3 eye(1,1,3);
-    Vec3 center(0,0,0);
 
+    float centerX = 0.0f, centerY = 0.0f, centerZ = 0.0f;
+    for (const auto &vertex : objData.vertices) {
+        centerX += vertex.second.x;
+        centerY += vertex.second.y;
+        centerZ += vertex.second.z;
+    }
+    centerX /= objData.vertices.size();
+    centerY /= objData.vertices.size();
+    centerZ /= objData.vertices.size();
+
+    // Calculate translation amounts to move the center of the model to the center of the screen
+    float translateX = width / 2.0f - centerX;
+    float translateY = height / 2.0f - centerY;
+    float translateZ = 0.0f - centerZ; // Assuming the screen is in the XY plane
+
+    // Apply translation to each vertex
+    for (auto &vertex : objData.vertices) {
+        vertex.second.x += translateX;
+        vertex.second.y += translateY;
+        vertex.second.z += translateZ;
+    }
+    Vec3 center = {centerX, centerY, centerZ};
     if (useZBuffer) {
         int numPixels = width * height;
         for (int i = numPixels; i > 0; --i) {
             zBuffer[i - 1] = std::numeric_limits<float>::lowest();
         }
     }
-//    Matrix<float> ModelView = Matrix<float>::lookat(eye, center, Vec3(0, 1, 0));
+    Matrix<float> Rotation = Matrix<float>::identity(4);
+//    float angleX = float(pov.y /10);
+    float angleX = 0.0f;
+//    float angleY = float(pov.y / 10);
+    float angleY = 0.0f;
+    float angleZ = float(pov.z / 10);
+//    float angleZ = 0.0f;
+
+    Rotation(0, 0) = cos(angleY) * cos(angleZ);
+    Rotation(0, 1) = -cos(angleX) * sin(angleZ) + sin(angleX) * sin(angleY) * cos(angleZ);
+    Rotation(0, 2) = sin(angleX) * sin(angleZ) + cos(angleX) * sin(angleY) * cos(angleZ);
+    Rotation(1, 0) = cos(angleY) * sin(angleZ);
+    Rotation(1, 1) = cos(angleX) * cos(angleZ) + sin(angleX) * sin(angleY) * sin(angleZ);
+    Rotation(1, 2) = -sin(angleX) * cos(angleZ) + cos(angleX) * sin(angleY) * sin(angleZ);
+    Rotation(2, 0) = -sin(angleY);
+    Rotation(2, 1) = sin(angleX) * cos(angleY);
+    Rotation(2, 2) = cos(angleX) * cos(angleY);
+
+//    Matrix<float> ModelView = Matrix<float>::lookat(pov, center, Vec3(0, pov.z, 0));
     Matrix<float> Projection = Matrix<float>::identity(4);
-    Matrix<float> ViewPort = Matrix<float>::viewport((width - width*2)/2, (height - height*2)/2, width*2, height*2); // this one is good cetered
+    Matrix<float> ViewPort = Matrix<float>::viewport((width - width*2)/2, (height - height*2)/2, width*2, height*2);
+    // this one is good cetered
 //    Matrix<float> ViewPort = Matrix<float>::viewport(width/8, height/8, width*3/4, height*3/4);
 
-    Projection(3,2) = -1.0f / (eye - center).norm();
+    Projection(3,2) = -1.0f / (pov - center).norm();
+//    Projection(3,2) = -1.0f / float(pov.z);
 
 
-    Matrix<float> View = (ViewPort * Projection);
+    Matrix<float> View = (ViewPort * Projection * Rotation);
     for(auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
         int vIdx2 = face.second[1].vertexIndex;
@@ -171,5 +228,7 @@ void Model::drawModelWithTexture(Vec3 lightDirection, bool useZBuffer) {
             }
         }
     }
-    image.write_tga_file("output_texture.tga");
+    std::string name = "output_texture" + std::to_string((int)pov.x) + std::to_string((int)pov.y) + std::to_string((int)pov.z) + ".tga";
+    image.write_tga_file(name);
 }
+

@@ -13,11 +13,18 @@ int main() {
     Model model("/Users/martinlejko/Desktop/github/ZS2023/simple-software-renderer/objects/head/african_head.obj"); //provide the obj file to render
 
     //choose the render option
-    model.drawModelLinesOnly(blue);
-    model.drawModelColorfulTriangles();
-    model.drawModelWithShadows(lightDirection, false);
-    model.drawModelWithTexture(lightDirection);
+//    model.drawModelLinesOnly(blue);
+//    model.drawModelColorfulTriangles();
+//    model.drawModelWithShadows(lightDirection, false);
+//    model.drawModelWithTexture(lightDirection, {0,0,3});
 
+    for (float i = 0; i < 30; i++) {
+//        for(float j = 0; j < 11; j++) {
+//           for(float k = 0; k < 11; k++) {
+               model.drawModelWithTexture(lightDirection, {1,1,i});
+//           }
+//        }
+    }
     //zBuffer testing generation
     TGAImage zbimage(width, height, TGAImage::GRAYSCALE);
     for (int i = 0; i < width; i++){

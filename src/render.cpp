@@ -38,7 +38,7 @@ void drawLine(const Vertex &v1, const Vertex &v2, const TGAColor &color, TGAImag
 void projectVerts(int width, int height, std::unordered_map<int, Vertex>& vertices) {
     //project the vertices to the screen
     for (auto &vertex : vertices) {
-        vertex.second.x = (int)((vertex.second.x + 1) * width / 2);
+        vertex.second.x = (int)((vertex.second.x + 1) * width / 2) ;
         vertex.second.y = (int)((vertex.second.y + 1) * height / 2);
     }
 }
