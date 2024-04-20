@@ -111,8 +111,35 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
     if(useZBuffer){
         for (int i = width * height; i--; zBuffer[i] = std::numeric_limits<float>::lowest());
     }
-    Matrix<float> projection = Matrix<float>::identity(4);
-    
+    Matrix<float> Projection = Matrix<float>::identity(4);
+    Matrix<float> ViewPort = Matrix<float>::viewport((width - width*2)/2, (height - height*2)/2, width*2, height*2);
+//    Projection(3, 2) = -1.0f / -1.0f;
+//    float viewAngle = 0.5f; // Example viewing angle
+//    float rotationAngle = 0.5f; // Example rotation angle around y-axis
+//
+//    Matrix<float> ViewAngleRotation(4, 4);
+//    ViewAngleRotation(0, 0) = cos(viewAngle);
+//    ViewAngleRotation(0, 1) = 0;
+//    ViewAngleRotation(0, 2) = -sin(viewAngle);
+//    ViewAngleRotation(1, 0) = 0;
+//    ViewAngleRotation(1, 1) = 1.0f;
+//    ViewAngleRotation(1, 2) = 0;
+//    ViewAngleRotation(2, 0) = sin(viewAngle);
+//    ViewAngleRotation(2, 1) = 0;
+//    ViewAngleRotation(2, 2) = cos(viewAngle);
+//    ViewAngleRotation(3, 3) = 1.0f;
+//
+//    Matrix<float> YAxisRotation(4, 4);
+//    YAxisRotation(0, 0) = cos(rotationAngle);
+//    YAxisRotation(0, 2) = sin(rotationAngle);
+//    YAxisRotation(1, 1) = 1.0f;
+//    YAxisRotation(2, 0) = -sin(rotationAngle);
+//    YAxisRotation(2, 2) = cos(rotationAngle);
+//    YAxisRotation(3, 3) = 1.0f;
+//
+//    Matrix<float> totalRotation = YAxisRotation * ViewAngleRotation;
+//
+//    ViewPort = totalRotation * ViewPort;
 
     for(auto &face : objData.faces) {
         int vIdx1 = face.second[0].vertexIndex;
@@ -129,6 +156,17 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
                 objData.vertices[vIdx3]
         };
 
+        triangle.v1 = toVertex(ViewPort * Projection * toMatrix(triangle.v1));
+        triangle.v2 = toVertex(ViewPort * Projection * toMatrix(triangle.v2));
+        triangle.v3 = toVertex(ViewPort * Projection * toMatrix(triangle.v3));
+
+        triangle.v1.x = (triangle.v1.x + 1) / 1000;
+        triangle.v1.y = (triangle.v1.y + 1) / 1000;
+        triangle.v2.x = (triangle.v2.x + 1) / 1000;
+        triangle.v2.y = (triangle.v2.y + 1) / 1000;
+        triangle.v3.x = (triangle.v3.x + 1) / 1000;
+        triangle.v3.y = (triangle.v3.y + 1) / 1000;
+
         UVTriangleData uvTriangle = {
                 objData.uvVectors[uvIdx1],
                 objData.uvVectors[uvIdx2],
@@ -144,6 +182,7 @@ void Model::drawModelWithTexture(TGAImage &image, Vec3 lightDirection, bool useZ
 
         if (intensity > 0) {
             if(useZBuffer){
+
                 drawTriangleTextureZ(triangle, uvTriangle, intensity, zBuffer, texture, image);
             }
         }
