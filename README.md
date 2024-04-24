@@ -28,6 +28,7 @@ Before using the software renderer, make sure you have the following prerequisit
 
 - C++ compiler (e.g., g++, Visual C++)
 - Standard Template Library (STL) support
+- spdlog library for logging
 
 ### Installation 
 
@@ -38,8 +39,8 @@ To install and build the project, follow these steps:
    git clone https://github.com/martinlejko/simple-software-renderer.git
    cd software-renderer
    ```
-2. Since this project does not rely on external libraries.
-    Just build it and run the main executable. :)
+2. Install the spdlog
+3. Build it and run the main.cpp :)
 
 ### Usage
 
