@@ -6,6 +6,7 @@
 #include "render.h"
 #include "parser.h"
 #include "datatypes.h"
+#include "logging.h"
 #include "tgaimage.h"
 #include <iostream>
 #include <limits>
@@ -23,7 +24,11 @@ Model::Model(std::string filename, int width, int height) : width(width), height
 
 void Model::loadTexture(const std::string& filename, TGAImage &image) {
     std::string textureFile = filename.substr(0, filename.size() - 4) + "_diffuse.tga"; // -4 because of .obj
-    std::cout << "texture file " << textureFile << " loading " << (image.read_tga_file(textureFile) ? "ok" : "failed") << std::endl;
+    if (image.read_tga_file(textureFile)) {
+        logger->info("Texture file {} loaded successfully.", textureFile);
+    } else {
+        logger->error("Failed to load texture file {}.", textureFile);
+    }
     image.flip_vertically();
 }
 
@@ -37,6 +42,7 @@ void Model::drawModelLinesOnly(TGAColor &color) {
         }
     }
     image.write_tga_file("output_line.tga");
+    logger->info("Model rendered with lines only.");
 }
 
 void Model::drawModelColorfulTriangles() {
@@ -51,6 +57,7 @@ void Model::drawModelColorfulTriangles() {
         drawTriangle(triangle, colorful, image);
     }
     image.write_tga_file("output_color_triangle.tga");
+    logger->info("Model rendered with colorful triangles.");
 }
 
 void Model::printZBuffer(const std::vector<float>& zbuffer, int width, int height) {
@@ -58,11 +65,11 @@ void Model::printZBuffer(const std::vector<float>& zbuffer, int width, int heigh
         for (int x = 0; x < width; ++x) {
             int idx = x + y * width;
             if (zbuffer[idx] != std::numeric_limits<float>::min()) {
-                std::cout << "1 ";
+                logger->info("ZBuffer[{}][{}] = {}", x, y, zbuffer[idx]);
             }
         }
     }
-
+    logger->info("ZBuffer printed.");
 }
 
 void Model::drawModelWithShadows(Vec3 lightDirection, bool useZBuffer) {
@@ -103,6 +110,7 @@ void Model::drawModelWithShadows(Vec3 lightDirection, bool useZBuffer) {
         }
     }
     image.write_tga_file("output_shadow.tga");
+    logger->info("Model rendered with shadows.");
 }
 
 void Model::drawModelWithTexture(Vec3 lightDirection, bool useZBuffer) {
@@ -166,10 +174,10 @@ void Model::drawModelWithTexture(Vec3 lightDirection, bool useZBuffer) {
 
         if (intensity > 0) {
             if(useZBuffer){
-
                 drawTriangleTextureZ(triangle, uvTriangle, intensity, zBuffer, texture, image);
             }
         }
     }
     image.write_tga_file("output_texture.tga");
+    logger->info("Model rendered with texture.");
 }

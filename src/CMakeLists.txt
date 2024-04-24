@@ -3,6 +3,10 @@ project(simple-software-renderer)
 
 set(CMAKE_CXX_STANDARD 20)
 
+find_package(spdlog REQUIRED)
+
+include_directories(${spdlog_INCLUDE_DIRS})
+
 add_executable(simple-software-renderer main.cpp
         tgaimage.cpp
         tgaimage.h
@@ -14,4 +18,8 @@ add_executable(simple-software-renderer main.cpp
         model.h
         render.cpp
         render.h
+        logging.cpp
+        logging.cpp
+        logging.h
 )
+target_link_libraries(simple-software-renderer PRIVATE spdlog::spdlog)

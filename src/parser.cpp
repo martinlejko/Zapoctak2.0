@@ -3,6 +3,7 @@
 //
 
 #include "parser.h"
+#include "logging.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -10,34 +11,41 @@
 #include <algorithm>
 
 bool Parser::isValidFile(std::string &filename) {
-    std::ifstream  file(filename);
-    return file.is_open();
+    std::ifstream file(filename);
+    if (file.is_open()) {
+        logger->info("File {} is valid and open.", filename);
+        return true;
+    } else {
+        logger->error("Failed to open file {}.", filename);
+        return false;
+    }
 }
-
 void Parser::printDataInfo(WaveFrontData &data) {
-    std::cout << "Vertices: " << data.vertices.size() << std::endl;
-    std::cout << "Vertex normals: " << data.vertexNormals.size() << std::endl;
-    std::cout << "UV vectors: " << data.uvVectors.size() << std::endl;
-    std::cout << "Faces: " << data.faces.size() << std::endl;
+    logger->debug("Printing data info:");
+    logger->debug("Vertices: {}", data.vertices.size());
+    logger->debug("Vertex normals: {}", data.vertexNormals.size());
+    logger->debug("UV vectors: {}", data.uvVectors.size());
+    logger->debug("Faces: {}", data.faces.size());
 }
-
 void Parser::printNthFace(WaveFrontData &data, int n) {
     auto it = data.faces.find(n);
-    std::cout << "Face " << n << ": " << std::endl;
+    logger->debug("Face {}: ", n);
     for (const auto& faceElement : it->second) {
-        std::cout << "  Vertex Index: " << faceElement.vertexIndex << " | Texture Index: " <<
-                  faceElement.textureIndex << " | Normal Index: " << faceElement.normalIndex << std::endl;
+        logger->debug("  Vertex Index: {} | Texture Index: {} | Normal Index: {}",
+                     faceElement.vertexIndex, faceElement.textureIndex, faceElement.normalIndex);
     }
 }
 
+
 void Parser::printNthVertex(WaveFrontData &data, int n) {
     auto it = data.vertices.find(n);
-    std::cout << "Vertex " << n << ": " << std::endl;
-    std::cout << it->second.x << " " << it->second.y << " " << it->second.z << std::endl;
+    logger->info("Vertex {}: ", n);
+    logger->info("{} {} {}", it->second.x, it->second.y, it->second.z);
 }
 
 WaveFrontData Parser::parseObjFile(std::string &filename) {
     if (!isValidFile(filename)) {
+        logger->error("Error: Unable to open or read the file {}", filename);
         throw std::runtime_error("Error: Unable to open or read the file " + filename); //do I have to catch it?
     }
 
@@ -83,12 +91,14 @@ WaveFrontData Parser::parseObjFile(std::string &filename) {
                 face.push_back(faceElement);
             }
             if (face.size() == 9){
+                logger->error("Error: Face element is not a triangle");
                 throw std::runtime_error("Error: Face element is not a triangle");
             }
             objData.faces.emplace(faceIndex++, face);
         }
 
     }
+    logger->info("File {} parsed successfully.", filename);
     return objData;
 }
 
@@ -119,4 +129,5 @@ void Parser::normalizeVectors(WaveFrontData &data) {
             v.z = 2.0f * (v.z - min_values[i]) / (max_values[i] - min_values[i]) - 1.0f;
         }
     }
+    logger->info("Vectors normalized.");
 }

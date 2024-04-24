@@ -4,6 +4,7 @@
 
 #include "render.h"
 #include "datatypes.h"
+#include "logging.h"
 #include <iostream>
 
 void drawLine(const Vertex &v1, const Vertex &v2, const TGAColor &color, TGAImage &image) {
@@ -41,6 +42,7 @@ void projectVerts(int width, int height, std::unordered_map<int, Vertex>& vertic
         vertex.second.x = (int)((vertex.second.x + 1) * width / 2);
         vertex.second.y = (int)((vertex.second.y + 1) * height / 2);
     }
+    logger->info("Vertices projected to the screen.");
 }
 
 Vec3 barycentric(const Vertex &v1, const Vertex &v2, const Vertex &v3, const Vertex &p) {
