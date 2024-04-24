@@ -28,7 +28,7 @@ Before using the software renderer, make sure you have the following prerequisit
 
 - C++ compiler (e.g., g++, Visual C++)
 - Standard Template Library (STL) support
-- spdlog library for logging
+- [spdlog](https://github.com/gabime/spdlog) library for logging
 
 ### Installation 
 
