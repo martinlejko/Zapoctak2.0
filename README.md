@@ -1,4 +1,5 @@
 Software Renderer from Scratch
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -21,8 +22,7 @@ This project revolves around the visualization of 3D models using the Wavefront 
 
 ## Getting Started
 
-
-### Prerequisites 
+### Prerequisites
 
 Before using the software renderer, make sure you have the following prerequisites installed:
 
@@ -30,7 +30,7 @@ Before using the software renderer, make sure you have the following prerequisit
 - Standard Template Library (STL) support
 - [spdlog](https://github.com/gabime/spdlog) library for logging
 
-### Installation 
+### Installation
 
 To install and build the project, follow these steps:
 
@@ -44,71 +44,58 @@ To install and build the project, follow these steps:
 
 ### Usage
 
-   To use the software renderer, follow these steps:
+To use the software renderer, follow these steps:
 
-   - **Rendering TGA from OBJ:**
-     Render a TGA image from an OBJ file. Optionally, you can provide a TGA file for texture mapping.
+```bash
+./simple-software-renderer [OPTIONS]
+```
 
-   - **Example Rendering** <a name="example-rendering"></a>:
-     ```cpp
-        //set parameters that you want
+#### Options
 
-        const int width = 1000;
-        const int height = 1000;
-        const Vec3 lightDirection = Vec3(0, 0, -1);
-        
-        TGAColor red = TGAColor(255, 0, 0, 255);
-        
-        int main() {
-            //creation of the image that we are rendering onto
-            TGAImage image(width, height, TGAImage::RGB);
-            Model model(width, height, "path/to/the/obj/file"); //provide the obj file
+    -model [model_file]: Required. Specifies the input model file path.
+    -texture [texture_file]: Optional for some functions needed. Specifies the texture file.
+    -zbuffer: Optional. Enables z-buffering.
+    -lightdirection [x,y,z]: Optional. Specifies the direction of the light source. Expected format: -lightdirection "x,y,z".
+    -drawtype [lines|colortriangle|texture|light]: Required. Specifies the type of drawing to perform. Available options: lines, colortriangle, texture, light.
 
-            //select the rendering option you want
-            model.drawModelLinesOnly(image, red);
-            model.drawModelColorfulTriangles(image);
-            model.drawModelWithShadows(image, lightDirection, true);
-            model.drawModelWithTexture(image, lightDirection, true);
-
-            image.flip_vertically();
-            image.write_tga_file("output.tga");
-            return 0;
-        }
-        ```
-   
-   - **Rendered Images:**
-     ![Rendered Image 1](images/diablo_lines.jpg)
-     ![Rendered Image 2](images/head_nm.jpg)
+- **Rendered Images:**
+  ![Rendered Image 1](images/diablo_lines.jpg)
+  ![Rendered Image 2](images/head_nm.jpg)
 
 ### Features
 
-   The software renderer supports the following features:
+The software renderer supports the following features:
 
-   - **Basic Drawing Functions:**
-     - Draw lines and triangles using fundamental rendering functions.
+- **Basic Drawing Functions:**
 
-   - **Rendering OBJ Models:**
-     - Render 3D models from Wavefront OBJ files.
+  - Draw lines and triangles using fundamental rendering functions.
 
-   - **Customizable Rendering:**
-     - Render models with:
-       - Only using lines.
-       - Random color triangles.
-       - Specified light vector for accurate shading.
-       - Texture mapping using provided TGA files.
+- **Rendering OBJ Models:**
 
-   - **Example Features Usage:**
-     ```cpp
-     // Example rendering with shadows
-     const Vec3 lightDirection = Vec3(0,0,-1); //Light vector directly facing
-     model.drawModelWithShadows(image, lightDirection, usingZbuffer) //can specify if you want to use zBuffer [bool]
+  - Render 3D models from Wavefront OBJ files.
 
-     // Example rendering with texture mapping
-     const Vec3 lightDirection = Vec3(0,0,-1); //Light vector directly facing
-     model.drawModelWithShadows(image, lightDirection, usingZbuffer) 
-     //texture needs to be in the same directory as the objfiles and has to be named as pathToObj_diffuse.tga
-     //for custom path setting checkout the model.cpp file and loadTexture() function
-     ```
+- **Customizable Rendering:**
+
+  - Render models with:
+    - Only using lines.
+    - Random color triangles.
+    - Specified light vector for accurate shading.
+    - Texture mapping using provided TGA files.
+
+- **Example Features Usage:**
+
+  ```cpp
+  // Example rendering with shadows
+  const Vec3 lightDirection = Vec3(0,0,-1); //Light vector directly facing
+  model.drawModelWithShadows(image, lightDirection, usingZbuffer) //can specify if you want to use zBuffer [bool]
+
+  // Example rendering with texture mapping
+  const Vec3 lightDirection = Vec3(0,0,-1); //Light vector directly facing
+  model.drawModelWithShadows(image, lightDirection, usingZbuffer)
+  //texture needs to be in the same directory as the objfiles and has to be named as pathToObj_diffuse.tga
+  //for custom path setting checkout the model.cpp file and loadTexture() function
+  ```
+
 ## Architecture
 
 The software renderer is designed with a simple and modular architecture, consisting of several key classes:
@@ -141,13 +128,10 @@ Contributions to the project are welcome! If you'd like to contribute, please fo
 
 Please note that all contributions will be subject to review before being merged into the main branch.
 
-
 ## License
 
-This project is licensed under the [MIT License](LICENSE.md). 
+This project is licensed under the [MIT License](LICENSE.md).
 
 ## Acknowledgments
 
 This project was built with reference to the lectures of Professor Dmitry V. Sokolov.
-
-
