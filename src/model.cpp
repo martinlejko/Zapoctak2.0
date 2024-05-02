@@ -11,7 +11,7 @@
 #include <iostream>
 #include <limits>
 
-Model::Model(std::string filename, int width, int height) : width(width), height(height), image(width, height, TGAImage::RGB) {
+Model::Model(std::string filename, std::string textureFile, int width, int height) : width(width), height(height), image(width, height, TGAImage::RGB) {
     //working with the obj file, tga texture
     objData = Parser::parseObjFile(filename);
     originalVertices = objData.vertices;
@@ -19,11 +19,10 @@ Model::Model(std::string filename, int width, int height) : width(width), height
 
     //zBuffer space allocation
     zBuffer.resize(width * height);
-    loadTexture(filename, texture);
+    loadTexture(textureFile, texture);
 }
 
-void Model::loadTexture(const std::string& filename, TGAImage &image) {
-    std::string textureFile = filename.substr(0, filename.size() - 4) + "_diffuse.tga"; // -4 because of .obj
+void Model::loadTexture(const std::string& textureFile, TGAImage &image) {
     if (image.read_tga_file(textureFile)) {
         logger->info("Texture file {} loaded successfully.", textureFile);
     } else {

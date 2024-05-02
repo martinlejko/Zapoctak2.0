@@ -21,5 +21,7 @@ add_executable(simple-software-renderer main.cpp
         logging.cpp
         logging.cpp
         logging.h
+        argparse.cpp
+        argparse.h
 )
 target_link_libraries(simple-software-renderer PRIVATE spdlog::spdlog)

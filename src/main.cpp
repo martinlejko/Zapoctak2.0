@@ -3,24 +3,27 @@
 #include <limits>
 #include "datatypes.h"
 #include "logging.h"
+#include "argparse.h"
 
 //set the parameters that you want
 const int width = 800;
 const int height = 800;
 Vec3 lightDirection = Vec3(0, 0, -1);
 TGAColor blue = {255, 0, 0, 255};
-int main() {
+int main(int argc, char* argv[]) {
     setupLogger();
+    Args args = parseArgs(argc, argv);
 
-    //creation of the image that we are rendering onto
-    Model model("/Users/martinlejko/Desktop/github/ZS2023/simple-software-renderer/objects/head/african_head.obj"); //provide the obj file to render
-
-    //choose the render option
-    model.drawModelLinesOnly(blue);
-    model.drawModelColorfulTriangles();
-    model.drawModelWithShadows(lightDirection, false);
-    model.drawModelWithTexture(lightDirection);
-
+    Model model(args.modelFile, args.textureFile);
+    if (args.drawType == "lines") {
+        model.drawModelLinesOnly(blue);
+    } else if (args.drawType == "colortriangle") {
+        model.drawModelColorfulTriangles();
+    } else if (args.drawType == "texture") {
+        model.drawModelWithTexture(args.lightDirection);
+    } else if (args.drawType == "light") {
+        model.drawModelWithShadows(args.lightDirection, args.zBufferFlag);
+    }
 
     //zBuffer testing generation
     TGAImage zbimage(width, height, TGAImage::GRAYSCALE);

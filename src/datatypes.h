@@ -9,6 +9,10 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include "tgaimage.h"
+#include <sstream>
+
+
 
 struct Vertex {
     float x;
@@ -89,8 +93,10 @@ struct Vec3 {
         else
             throw std::out_of_range("Index out of range for Vec3");
     }
-};
 
+
+};
+Vec3 stringToVec3(const std::string& str);
 struct TriangleData {
     Vertex v1;
     Vertex v2;
@@ -347,4 +353,11 @@ static Vertex toVertex(const Matrix<float>& m) {
     return {m(0, 0) / m(3, 0), m(1, 0) / m(3, 0), m(2, 0) / m(3, 0)};
 }
 
+struct Args {
+    std::string modelFile;
+    std::string textureFile;
+    bool zBufferFlag;
+    Vec3 lightDirection;
+    std::string drawType;
+};
 #endif //ZAPOCTAK2_0_DATATYPES_H
