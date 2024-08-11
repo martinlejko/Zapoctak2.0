@@ -23,5 +23,8 @@ add_executable(simple-software-renderer main.cpp
         logging.h
         argparse.cpp
         argparse.h
+        IParserStrategy.h
+        WaveFrontParserStrategy.h
+        CSVParserStrategy.h
 )
 target_link_libraries(simple-software-renderer PRIVATE spdlog::spdlog)

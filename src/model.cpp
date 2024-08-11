@@ -6,14 +6,20 @@
 #include "render.h"
 #include "parser.h"
 #include "datatypes.h"
+#include "IParserStrategy.h"
 #include "logging.h"
 #include "tgaimage.h"
+#include "WaveFrontParserStrategy.h"
+#include "CSVParserStrategy.h"
 #include <iostream>
 #include <limits>
 
 Model::Model(std::string filename, std::string textureFile, int width, int height) : width(width), height(height), image(width, height, TGAImage::RGB) {
     //working with the obj file, tga texture
-    objData = Parser::parseObjFile(filename);
+    std::unique_ptr<IParserStrategy> parserStrategy = std::make_unique<WaveFrontParserStrategy>();
+
+    Parser parser(std::move(parserStrategy));
+    objData = parser.parseFile(filename);
     originalVertices = objData.vertices;
     projectVerts(width, height, objData.vertices);
 
