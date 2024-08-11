@@ -22,14 +22,12 @@ public:
         return strategy->parse(filename);
     }
 
-    static WaveFrontData parseObjFile(std::string &filename);
     static void printDataInfo(WaveFrontData &data);
     static void printNthVertex(WaveFrontData &data, int n);
     static void printNthFace(WaveFrontData &data, int n);
     static void normalizeVectors(WaveFrontData &data);
 private:
     std::unique_ptr<IParserStrategy> strategy;
-    static bool isValidFile(std::string &filename);
 };
 
 

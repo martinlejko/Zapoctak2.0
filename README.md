@@ -50,6 +50,11 @@ To use the software renderer, follow these steps:
 ./simple-software-renderer [OPTIONS]
 ```
 
+#### Example Rendering
+```bash
+./simple-software-renderer -model simple-software-renderer/objects/head/african_head.obj -texture simple-software-renderer/objects/head/african_head_nm.tga -lightdirection "0,0,-1" -drawtype texture
+```
+
 #### Options
 
     -model [model_file]: Required. Specifies the input model file path.

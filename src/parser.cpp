@@ -10,16 +10,6 @@
 #include <limits>
 #include <algorithm>
 
-bool Parser::isValidFile(std::string &filename) {
-    std::ifstream file(filename);
-    if (file.is_open()) {
-        logger->info("File {} is valid and open.", filename);
-        return true;
-    } else {
-        logger->error("Failed to open file {}.", filename);
-        return false;
-    }
-}
 void Parser::printDataInfo(WaveFrontData &data) {
     logger->debug("Printing data info:");
     logger->debug("Vertices: {}", data.vertices.size());
